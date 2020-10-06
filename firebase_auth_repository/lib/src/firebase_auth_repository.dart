@@ -41,7 +41,7 @@ class FirebaseAuthenticationRepository<T> extends AuthenticationRepository<User,
   }) async {
     assert(email != null && password != null);
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -55,7 +55,7 @@ class FirebaseAuthenticationRepository<T> extends AuthenticationRepository<User,
   Future<void> logOut() async {
     try {
       await Future.wait([
-        _firebaseAuth.signOut(),
+        firebaseAuth.signOut(),
       ]);
     } on Exception {
       throw LogOutFailure();
