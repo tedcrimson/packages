@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:meta/meta.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -16,7 +14,7 @@ abstract class AuthenticationRepository<T, TT> {
   AuthenticationStatus _status;
   StreamSubscription<AuthenticationStatus> _subscription;
 
-  Stream<T> get user;
+  Stream<T> get userStream;
 
   AuthenticationStatus get status => _status;
 
@@ -47,15 +45,6 @@ abstract class AuthenticationRepository<T, TT> {
   void dispose() {
     _controller.close();
     _subscription.cancel();
-  }
-
-  //TODO MOVE to ANOTHER PACKAGE
-  @mustCallSuper
-  Future logInWithGoogle() async {
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _controller.add(AuthenticationStatus.authenticated),
-    );
   }
 
   @mustCallSuper
