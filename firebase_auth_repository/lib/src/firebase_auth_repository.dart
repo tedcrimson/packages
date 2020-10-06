@@ -7,21 +7,21 @@ import 'package:meta/meta.dart';
 class FirebaseAuthenticationRepository<T> extends AuthenticationRepository<User, T> {
   FirebaseAuthenticationRepository({
     FirebaseAuth firebaseAuth,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+  })  : firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super() {
     _userSubscription = userStream.listen((event) {
       fireUser = event;
     });
   }
 
-  final FirebaseAuth _firebaseAuth;
+  final FirebaseAuth firebaseAuth;
 
   User fireUser;
   StreamSubscription<User> _userSubscription;
 
   @override
   Stream<User> get userStream {
-    return _firebaseAuth.authStateChanges();
+    return firebaseAuth.authStateChanges();
   }
 
   String get userId => fireUser.uid;
