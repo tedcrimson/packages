@@ -17,7 +17,7 @@ class AuthenticationBloc<T, TT> extends Bloc<AuthenticationEvent, Authentication
   })  : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
         super(const AuthenticationState.unknown()) {
-    _userSubscription = _authenticationRepository.user.listen(
+    _userSubscription = _authenticationRepository.userStream.listen(
       (T user) => add(AuthenticationUserChanged<T>(user)),
     );
   }
