@@ -20,6 +20,7 @@ class SignUpCubit extends AuthCubit<SignUpState> {
               passwordKey: passwordKey,
             ),
             repository);
+
   @override
   Future<void> callAction() async {
     if (!state.status.isValidated) return;

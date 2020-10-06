@@ -12,10 +12,10 @@ class SignUpState extends AuthState {
     this.password = const PasswordForm.pure(),
     FormzStatus status = FormzStatus.pure,
   }) : super({
-          firstNameKey: MyForm(firstName, (x) => FieldForm.dirty(x, requiredField: true)),
-          lastNameKey: MyForm(lastName, (x) => FieldForm.dirty(x, requiredField: true)),
-          emailKey: MyForm(email, EmailForm.constructor),
-          passwordKey: MyForm(password, PasswordForm.constructor),
+          firstNameKey: FormEntity(firstName, (x) => FieldForm.dirty(x, requiredField: true)),
+          lastNameKey: FormEntity(lastName, (x) => FieldForm.dirty(x, requiredField: true)),
+          emailKey: FormEntity(email, EmailForm.constructor),
+          passwordKey: FormEntity(password, PasswordForm.constructor),
         }, status);
 
   final EmailForm email;
@@ -29,7 +29,7 @@ class SignUpState extends AuthState {
 
   @override
   AuthState copyWith({
-    Map<String, MyForm> forms = const {},
+    Map<String, FormEntity> forms = const {},
     FormzStatus status,
   }) {
     return SignUpState(

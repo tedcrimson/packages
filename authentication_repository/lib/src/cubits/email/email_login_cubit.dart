@@ -44,4 +44,5 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
   //     emit(state.copyWith(status: FormzStatus.pure));
   //   }
   // }
+
 }

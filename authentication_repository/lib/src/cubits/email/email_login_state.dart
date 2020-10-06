@@ -9,21 +9,20 @@ class EmailLoginState extends AuthState {
     FormzStatus status = FormzStatus.pure,
   }) : super(
           {
-            emailKey: MyForm(email, EmailForm.constructor),
-            passwordKey: MyForm(password, PasswordForm.constructor),
+            emailKey: FormEntity(email, EmailForm.constructor),
+            passwordKey: FormEntity(password, PasswordForm.constructor)
           },
           status,
         );
 
   final EmailForm email;
-  final PasswordForm password;
-
   final String emailKey;
+  final PasswordForm password;
   final String passwordKey;
 
   @override
   AuthState copyWith({
-    Map<String, MyForm> forms = const {},
+    Map<String, FormEntity> forms = const {},
     FormzStatus status,
   }) {
     return EmailLoginState(

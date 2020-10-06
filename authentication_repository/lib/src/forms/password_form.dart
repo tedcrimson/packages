@@ -8,27 +8,11 @@ enum PasswordValidationError {
 }
 
 class PasswordForm extends CredentialForm<PasswordValidationError> {
-  const PasswordForm.pure() : super.pure();
   const PasswordForm.dirty([String value = '']) : super.dirty(value);
+
   static constructor(String value) => PasswordForm.dirty(value);
 
-  // static final _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
-
-  @override
-  PasswordValidationError validator(String value) {
-    PasswordValidationError error;
-    if (value == null) {
-      error = null;
-    } else if (value.isEmpty) {
-      error = PasswordValidationError.isempty;
-    } else if (value.length < 8 && value.isNotEmpty) {
-      error = PasswordValidationError.morethaneight;
-    } else if (!value.contains(RegExp(r'[A-Z]'))) {
-      error = PasswordValidationError.onecapital;
-    } else if (!value.contains(RegExp(r'\d'))) error = PasswordValidationError.onenumber;
-
-    return error;
-  }
+  const PasswordForm.pure() : super.pure();
 
   @override
   String get errorText {
@@ -48,5 +32,23 @@ class PasswordForm extends CredentialForm<PasswordValidationError> {
         break;
     }
     return errorText;
+  }
+
+  // static final _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
+
+  @override
+  PasswordValidationError validator(String value) {
+    PasswordValidationError error;
+    if (value == null) {
+      error = null;
+    } else if (value.isEmpty) {
+      error = PasswordValidationError.isempty;
+    } else if (value.length < 8 && value.isNotEmpty) {
+      error = PasswordValidationError.morethaneight;
+    } else if (!value.contains(RegExp(r'[A-Z]'))) {
+      error = PasswordValidationError.onecapital;
+    } else if (!value.contains(RegExp(r'\d'))) error = PasswordValidationError.onenumber;
+
+    return error;
   }
 }

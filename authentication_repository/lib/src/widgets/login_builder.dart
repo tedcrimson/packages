@@ -9,6 +9,7 @@ typedef ButtonBuilder = Widget Function(
     BuildContext context, CredentialForm form, AuthState state, Future<void> Function() onPressed);
 
 abstract class LoginBuilder<T> extends StatelessWidget {
-  final T builder;
   const LoginBuilder(Key key, this.builder) : super(key: key);
+
+  final T builder;
 }

@@ -9,9 +9,6 @@ part 'authentication_event.dart';
 part 'authentication_state.dart';
 
 class AuthenticationBloc<T, TT> extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthenticationRepository<T, TT> _authenticationRepository;
-  StreamSubscription<T> _userSubscription;
-
   AuthenticationBloc({
     @required AuthenticationRepository authenticationRepository,
   })  : assert(authenticationRepository != null),
@@ -22,6 +19,16 @@ class AuthenticationBloc<T, TT> extends Bloc<AuthenticationEvent, Authentication
     );
   }
 
+  final AuthenticationRepository<T, TT> _authenticationRepository;
+  StreamSubscription<T> _userSubscription;
+
+  @override
+  Future<void> close() {
+    _userSubscription?.cancel();
+    _authenticationRepository.dispose();
+    return super.close();
+  }
+
   @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
@@ -29,15 +36,8 @@ class AuthenticationBloc<T, TT> extends Bloc<AuthenticationEvent, Authentication
     if (event is AuthenticationUserChanged) {
       yield _mapAuthenticationUserChangedToState(event);
     } else if (event is AuthenticationLogoutRequested) {
-      await _authenticationRepository.logOut();
+      _authenticationRepository.logOut();
     }
-  }
-
-  @override
-  Future<void> close() {
-    _userSubscription?.cancel();
-    _authenticationRepository.dispose();
-    return super.close();
   }
 
   AuthenticationState _mapAuthenticationUserChangedToState(
@@ -56,4 +56,5 @@ class AuthenticationBloc<T, TT> extends Bloc<AuthenticationEvent, Authentication
   //     return null;
   //   }
   // }
+
 }

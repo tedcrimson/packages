@@ -3,9 +3,11 @@ import 'credential_form.dart';
 enum EmailValidationError { invalid }
 
 class EmailForm extends CredentialForm<EmailValidationError> {
-  const EmailForm.pure() : super.pure();
   const EmailForm.dirty([String value = '']) : super.dirty(value);
+
   static constructor(String value) => EmailForm.dirty(value);
+
+  const EmailForm.pure() : super.pure();
 
   static final RegExp _emailRegExp = RegExp(
     // r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',

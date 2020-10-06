@@ -7,17 +7,17 @@ import 'package:formz/formz.dart';
 part 'auth_state.dart';
 
 abstract class AuthCubit<T extends AuthState> extends Cubit<T> {
-  final AuthenticationRepository authenticationRepository;
-
   AuthCubit(AuthState state, this.authenticationRepository)
       : assert(authenticationRepository != null),
         super(state);
+
+  final AuthenticationRepository authenticationRepository;
 
   // void credentialChanged(String value);
 
   void formChange<TT extends CredentialForm>(String key, dynamic value) {
     CredentialForm dirty = state.forms[key].dirtyFunc(value);
-    var changes = Map<String, MyForm>.from(state.forms);
+    var changes = Map<String, FormEntity>.from(state.forms);
     changes[key] = state.forms[key].copyWith(dirty);
     List<CredentialForm> valid = [];
     state.forms.forEach((k, value) {
