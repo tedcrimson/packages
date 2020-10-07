@@ -15,7 +15,7 @@ class FirebaseGoogleUser {
   });
 }
 
-mixin GoogleAuthenticationMixin on FirebaseAuthenticationRepository {
+mixin GoogleAuthenticationMixin<T> on FirebaseAuthenticationRepository<T> {
   GoogleSignIn _googleSignIn;
 
   Future<FirebaseGoogleUser> signInWithGoogle({List<String> scopes, OnComplete onComplete}) async {
