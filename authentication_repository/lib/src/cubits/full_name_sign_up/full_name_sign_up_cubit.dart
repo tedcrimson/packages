@@ -3,17 +3,17 @@ import 'package:authentication_repository/src/forms.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
-part 'sign_up_state.dart';
+part 'full_name_sign_up_state.dart';
 
-class SignUpCubit extends AuthCubit<SignUpState> {
-  SignUpCubit(
+class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
+  FullNameSignUpCubit(
     AuthenticationRepository repository,
     String firstNameKey,
     String lastNameKey,
     String emailKey,
     String passwordKey,
   ) : super(
-            SignUpState(
+            FullNameSignUpState(
               firstNameKey: firstNameKey,
               lastNameKey: lastNameKey,
               emailKey: emailKey,

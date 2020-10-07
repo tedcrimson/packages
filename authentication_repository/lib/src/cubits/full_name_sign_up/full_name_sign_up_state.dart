@@ -1,7 +1,7 @@
-part of 'sign_up_cubit.dart';
+part of 'full_name_sign_up_cubit.dart';
 
-class SignUpState extends AuthState {
-  SignUpState({
+class FullNameSignUpState extends AuthState {
+  FullNameSignUpState({
     @required this.firstNameKey,
     @required this.lastNameKey,
     @required this.emailKey,
@@ -32,7 +32,7 @@ class SignUpState extends AuthState {
     Map<String, FormEntity> forms = const {},
     FormzStatus status,
   }) {
-    return SignUpState(
+    return FullNameSignUpState(
       firstNameKey: firstNameKey,
       lastNameKey: lastNameKey,
       emailKey: emailKey,

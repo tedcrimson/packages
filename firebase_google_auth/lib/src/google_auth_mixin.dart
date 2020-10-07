@@ -12,7 +12,7 @@ mixin GoogleAuthenticationMixin<T> on FirebaseAuthenticationRepository<T> {
   Future signInWithGoogle({List<String> scopes, OnComplete onComplete}) async {
     try {
       if (_googleSignIn == null) {
-        _googleSignIn = GoogleSignIn.standard(scopes: scopes);
+        _googleSignIn = GoogleSignIn.standard(scopes: scopes, hostedDomain: '');
       }
       final googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser.authentication;
