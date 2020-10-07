@@ -22,24 +22,22 @@ abstract class AuthenticationRepository<T, TT> {
   Future logInWithEmailAndPassword({@required String email, @required String password}) async {
     assert(email != null);
     assert(password != null);
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _controller.add(AuthenticationStatus.authenticated),
-    );
+    await Future.delayed(const Duration(milliseconds: 300), logIn);
   }
 
   @mustCallSuper
   Future loginWithUserName({@required String username, @required String password}) async {
     assert(username != null);
     assert(password != null);
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _controller.add(AuthenticationStatus.authenticated),
-    );
+    await Future.delayed(const Duration(milliseconds: 300), logIn);
   }
 
   void logOut() {
     _controller.add(AuthenticationStatus.unauthenticated);
+  }
+
+  void logIn() {
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   void dispose() {
@@ -50,9 +48,6 @@ abstract class AuthenticationRepository<T, TT> {
   @mustCallSuper
   Future signUp({@required List fields}) async {
     assert(fields != null);
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _controller.add(AuthenticationStatus.authenticated),
-    );
+    await Future.delayed(const Duration(milliseconds: 300), logIn);
   }
 }
