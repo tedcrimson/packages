@@ -11,9 +11,11 @@ packages:
   authentication_repository:
     dependency: transitive
     description:
-      path: "../../../Development/flutter/.pub-cache/git/packages-87a7f7e7e35f49fb13cae91f2ee0301020bc79fb/authentication_repository"
-      relative: true
-    source: path
+      path: authentication_repository
+      ref: HEAD
+      resolved-ref: "52d985458eb9f753a47d4d7b4cf5915d9ee4fff2"
+      url: "git@github.com:tedcrimson/packages.git"
+    source: git
     version: "1.0.0"
   bloc:
     dependency: transitive
@@ -97,7 +99,7 @@ packages:
     description:
       path: firebase_auth_repository
       ref: HEAD
-      resolved-ref: "87a7f7e7e35f49fb13cae91f2ee0301020bc79fb"
+      resolved-ref: "52d985458eb9f753a47d4d7b4cf5915d9ee4fff2"
       url: "git@github.com:tedcrimson/packages.git"
     source: git
     version: "0.0.1"
