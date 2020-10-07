@@ -9,10 +9,10 @@ typedef OnComplete = Future Function(GoogleSignInAccount user);
 mixin GoogleAuthenticationMixin<T> on FirebaseAuthenticationRepository<T> {
   GoogleSignIn _googleSignIn;
 
-  Future signInWithGoogle(OnComplete onComplete) async {
+  Future signInWithGoogle({List<String> scopes, OnComplete onComplete}) async {
     try {
       if (_googleSignIn == null) {
-        _googleSignIn = GoogleSignIn.standard();
+        _googleSignIn = GoogleSignIn.standard(scopes: scopes);
       }
       final googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser.authentication;
