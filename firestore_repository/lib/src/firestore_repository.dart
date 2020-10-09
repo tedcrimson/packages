@@ -10,7 +10,13 @@ class FirestoreRepository extends CRUDRepository {
   final FirebaseFirestore _firestore;
   // final FirebaseAuthenticationRepository _auth;
 
-  Future<DocumentSnapshot> getData(List fields) {
+  Future<QuerySnapshot> getCollection(List fields) {
+    if (fields.contains(null)) throw FirestoreNullArgumentException();
+    if (fields.length % 2 == 0) throw FirestoreArgumentException();
+    return _firestore.collection(fields.join('/')).get();
+  }
+
+  Future<DocumentSnapshot> getDocument(List fields) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return read(fields.join('/'));
