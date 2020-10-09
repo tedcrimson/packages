@@ -11,10 +11,14 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
     AuthenticationRepository repository,
     String emailKey,
     String passwordKey,
+    EmailForm email,
+    PasswordForm password,
   ) : super(
             EmailLoginState(
               emailKey: emailKey,
               passwordKey: passwordKey,
+              email: email,
+              password: password,
             ),
             repository);
 
