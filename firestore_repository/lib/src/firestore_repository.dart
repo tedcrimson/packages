@@ -22,10 +22,16 @@ class FirestoreRepository extends CRUDRepository {
     return read(fields.join('/'));
   }
 
+  Future<void> addData(List fields, Map<String, dynamic> jsonData) {
+    if (fields.contains(null)) throw FirestoreNullArgumentException();
+    if (fields.length % 2 == 0) throw FirestoreArgumentException();
+    return create(fields.join('/'), jsonData);
+  }
+
   Future<void> setData(List fields, Map<String, dynamic> jsonData) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
-    return create(fields.join('/'), jsonData);
+    return update(fields.join('/'), jsonData);
   }
 
   Stream<DocumentSnapshot> listen(List fields) {
@@ -35,17 +41,17 @@ class FirestoreRepository extends CRUDRepository {
   }
 
   @override
-  Future create(String path, dynamic data) {
-    return _firestore.doc(path).set(data);
+  Future<DocumentReference> create(String path, dynamic data) {
+    return _firestore.collection(path).add(data);
   }
 
   @override
-  Future delete(String path) {
+  Future<void> delete(String path) {
     return _firestore.doc(path).delete();
   }
 
   @override
-  Future read(String path) {
+  Future<DocumentSnapshot> read(String path) {
     return _firestore.doc(path).get();
   }
 
