@@ -14,7 +14,7 @@ class FirestoreRepository extends CRUDRepository {
   Future<QuerySnapshot> getCollection(List fields, {List<QueryFilter> query}) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
-    var reference = _firestore.collection(fields.join('/'));
+    Query reference = _firestore.collection(fields.join('/'));
     if (query != null) {
       for (var filter in query)
         reference = reference.where(
