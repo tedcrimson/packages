@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 part 'crud_repository.dart';
 part 'exceptions.dart';
+part 'query_filter.dart';
 
 class FirestoreRepository extends CRUDRepository {
   FirestoreRepository({
@@ -10,10 +11,26 @@ class FirestoreRepository extends CRUDRepository {
   final FirebaseFirestore _firestore;
   // final FirebaseAuthenticationRepository _auth;
 
-  Future<QuerySnapshot> getCollection(List fields) {
+  Future<QuerySnapshot> getCollection(List fields, {List<QueryFilter> query}) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
-    return _firestore.collection(fields.join('/')).get();
+    var reference = _firestore.collection(fields.join('/'));
+    if (query != null) {
+      for (var filter in query)
+        reference = reference.where(
+          filter.field,
+          isEqualTo: filter.isEqualTo,
+          isLessThan: filter.isLessThan,
+          isLessThanOrEqualTo: filter.isLessThanOrEqualTo,
+          isGreaterThan: filter.isGreaterThan,
+          isGreaterThanOrEqualTo: filter.isGreaterThanOrEqualTo,
+          arrayContains: filter.arrayContains,
+          arrayContainsAny: filter.arrayContainsAny,
+          whereIn: filter.whereIn,
+          isNull: filter.isNull,
+        );
+    }
+    return reference.get();
   }
 
   Future<DocumentSnapshot> getDocument(List fields) {
