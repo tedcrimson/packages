@@ -3,21 +3,23 @@ import 'dart:async';
 import 'models/models.dart';
 
 abstract class UserRepository {
-  UserModel _user;
+  UserRepository({Stream<UserModel> stream}) {
+    if (stream != null)
+      _controller = stream.listen((event) {
+        _user = event;
+      });
+  }
 
   StreamSubscription<UserModel> _controller;
-
-  UserRepository({Stream<UserModel> stream}) : assert(stream != null) {
-    _controller = stream.listen((event) {
-      _user = event;
-    });
-  }
+  UserModel _user;
 
   void dispose() {
     _controller?.cancel();
   }
 
   UserModel get user => _user;
+
+  StreamSubscription get usetSubscription => _controller;
 
   Future<UserModel> getUser() async {
     if (_user != null) return _user;
