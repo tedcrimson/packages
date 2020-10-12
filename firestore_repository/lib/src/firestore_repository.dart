@@ -11,13 +11,18 @@ class FirestoreRepository extends CRUDRepository {
   final FirebaseFirestore _firestore;
   // final FirebaseAuthenticationRepository _auth;
 
-  Future<QuerySnapshot> getCollection(List fields, {List<QueryFilter> query}) {
+  Future<QuerySnapshot> getCollection(List fields,
+      {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit, GetOptions getOptions}) async {
+    return getQuery(fields, filters: filters, startAfter: startAfter, limit: limit).get(getOptions);
+  }
+
+  Query getQuery(List fields, {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit}) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
-    Query reference = _firestore.collection(fields.join('/'));
-    if (query != null) {
-      for (var filter in query)
-        reference = reference.where(
+    Query query = _firestore.collection(fields.join('/'));
+    if (filters != null) {
+      for (var filter in filters)
+        query = query.where(
           filter.field,
           isEqualTo: filter.isEqualTo,
           isLessThan: filter.isLessThan,
@@ -30,7 +35,18 @@ class FirestoreRepository extends CRUDRepository {
           isNull: filter.isNull,
         );
     }
-    return reference.get();
+
+    if (startAfter != null) query = query.startAfterDocument(startAfter);
+    if (limit != null) query = query.limit(limit);
+
+    return limitQuery(query, startAfter: startAfter, limit: limit);
+  }
+
+  Query limitQuery(Query query, {DocumentSnapshot startAfter, int limit}) {
+    if (startAfter != null) query = query.startAfterDocument(startAfter);
+    if (limit != null) query = query.limit(limit);
+
+    return query;
   }
 
   Future<DocumentSnapshot> getDocument(List fields) {
