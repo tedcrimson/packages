@@ -1,17 +1,17 @@
 part of 'pagination_bloc.dart';
 
-abstract class PaginationState<T> extends Equatable {
+abstract class PaginationState extends Equatable {
   const PaginationState();
 
   @override
   List<Object> get props => [];
 }
 
-class PaginationInitial<T> extends PaginationState<T> {}
+class PaginationInitial extends PaginationState {}
 
-class PaginationFailure<T> extends PaginationState<T> {}
+class PaginationFailure extends PaginationState {}
 
-class PaginationSuccess<T> extends PaginationState<T> {
+class PaginationSuccess<T> extends PaginationState {
   final List<T> data;
   final bool hasReachedMax;
   final DocumentSnapshot lastSnapshot;
@@ -21,12 +21,12 @@ class PaginationSuccess<T> extends PaginationState<T> {
     this.hasReachedMax,
   });
 
-  PaginationSuccess copyWith({
+  PaginationSuccess<T> copyWith({
     List<T> data,
     bool hasReachedMax,
     DocumentSnapshot lastSnapshot,
   }) {
-    return PaginationSuccess(
+    return PaginationSuccess<T>(
       data: data ?? this.data,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       lastSnapshot: lastSnapshot ?? this.lastSnapshot,

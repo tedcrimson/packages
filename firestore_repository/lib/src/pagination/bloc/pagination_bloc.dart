@@ -8,20 +8,20 @@ part 'pagination_state.dart';
 
 typedef Converter<T> = T Function(DocumentSnapshot snapshot);
 
-class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
-  PaginationBloc(this.query, this.converter, {this.limit = 20}) : super(PaginationInitial<T>());
+class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
+  PaginationBloc(this.query, this.converter, {this.limit = 20}) : super(PaginationInitial());
   Query query;
   Converter<T> converter;
   int limit;
 
   @override
-  Stream<PaginationState<T>> mapEventToState(
+  Stream<PaginationState> mapEventToState(
     PaginationEvent event,
   ) async* {
     final currentState = state;
     if (event is PaginationFetched && !_hasReachedMax(currentState)) {
       try {
-        if (currentState is PaginationInitial<T>) {
+        if (currentState is PaginationInitial) {
           final rawdata = await _fetchPaginations(null, limit);
           final data = rawdata.map((rawPagination) {
             return converter(rawPagination);
@@ -69,9 +69,9 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
   }
 
   @override
-  Stream<Transition<PaginationEvent, PaginationState<T>>> transformEvents(
+  Stream<Transition<PaginationEvent, PaginationState>> transformEvents(
     Stream<PaginationEvent> events,
-    TransitionFunction<PaginationEvent, PaginationState<T>> transitionFn,
+    TransitionFunction<PaginationEvent, PaginationState> transitionFn,
   ) {
     return super.transformEvents(
       events.debounceTime(const Duration(milliseconds: 500)),
