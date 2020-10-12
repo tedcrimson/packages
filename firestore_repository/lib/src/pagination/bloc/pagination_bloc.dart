@@ -28,7 +28,7 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
           final data = rawdata.map((rawPagination) {
             return converter(rawPagination);
           }).toList();
-          yield PaginationSuccess<T>(data: data, hasReachedMax: false, lastSnapshot: last);
+          yield PaginationSuccess<T>(data: data, hasReachedMax: data.length <= limit, lastSnapshot: last);
           return;
         }
         if (currentState is PaginationSuccess<T>) {
