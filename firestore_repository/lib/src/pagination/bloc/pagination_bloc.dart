@@ -23,10 +23,12 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
       try {
         if (currentState is PaginationInitial) {
           final rawdata = await _fetchPaginations(null, limit);
+          final last = rawdata.isNotEmpty ? rawdata.last : null;
+
           final data = rawdata.map((rawPagination) {
             return converter(rawPagination);
           }).toList();
-          yield PaginationSuccess<T>(data: data, hasReachedMax: false);
+          yield PaginationSuccess<T>(data: data, hasReachedMax: false, lastSnapshot: last);
           return;
         }
         if (currentState is PaginationSuccess<T>) {
