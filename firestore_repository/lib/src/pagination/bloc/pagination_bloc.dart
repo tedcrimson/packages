@@ -60,9 +60,10 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
     var q = query;
     if (startAfter != null) q = q.startAfterDocument(startAfter);
 
-    var snapshot = await q.limit(limit).get().catchError(() {
-      throw Exception('error fetching data');
-    });
+    var snapshot = await q.limit(limit).get();
+    // .catchError(() {
+    //   throw Exception('error fetching data');
+    // });
 
     return snapshot.docs;
   }
