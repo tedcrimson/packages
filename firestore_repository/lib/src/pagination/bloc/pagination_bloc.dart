@@ -6,12 +6,12 @@ import 'package:rxdart/rxdart.dart';
 part 'pagination_event.dart';
 part 'pagination_state.dart';
 
-typedef Converter = T Function<T>(DocumentSnapshot snapshot);
+typedef Converter<T> = T Function(DocumentSnapshot snapshot);
 
 class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
   PaginationBloc(this.query, this.converter, {this.limit = 20}) : super(PaginationInitial<T>());
   Query query;
-  Converter converter;
+  Converter<T> converter;
   int limit;
 
   @override
@@ -42,7 +42,7 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
     final rawdata = await _fetchPaginations(currentState.lastSnapshot, limit);
     final last = rawdata.isNotEmpty ? rawdata.last : currentState.lastSnapshot;
     final data = rawdata.map((rawPagination) {
-      return converter<T>(rawPagination);
+      return converter(rawPagination);
     }).toList();
     if (data.isEmpty) {
       yield currentState.copyWith(hasReachedMax: true, lastSnapshot: last);
