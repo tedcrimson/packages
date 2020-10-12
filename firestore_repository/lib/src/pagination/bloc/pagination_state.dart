@@ -7,11 +7,11 @@ abstract class PaginationState<T> extends Equatable {
   List<Object> get props => [];
 }
 
-class PaginationInitial<T> extends PaginationState {}
+class PaginationInitial<T> extends PaginationState<T> {}
 
-class PaginationFailure<T> extends PaginationState {}
+class PaginationFailure<T> extends PaginationState<T> {}
 
-class PaginationSuccess<T> extends PaginationState {
+class PaginationSuccess<T> extends PaginationState<T> {
   final List<T> data;
   final bool hasReachedMax;
   final DocumentSnapshot lastSnapshot;
