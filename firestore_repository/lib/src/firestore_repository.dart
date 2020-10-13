@@ -64,6 +64,12 @@ class FirestoreRepository extends CRUDRepository {
   Future<void> setData(List fields, Map<String, dynamic> jsonData) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
+    return _set(fields.join('/'), jsonData);
+  }
+
+  Future<void> updateData(List fields, Map<String, dynamic> jsonData) {
+    if (fields.contains(null)) throw FirestoreNullArgumentException();
+    if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return update(fields.join('/'), jsonData);
   }
 
@@ -91,5 +97,9 @@ class FirestoreRepository extends CRUDRepository {
   @override
   Future update(String path, dynamic data) {
     return _firestore.doc(path).update(data);
+  }
+
+  Future _set(String path, dynamic data) {
+    return _firestore.doc(path).set(data);
   }
 }
