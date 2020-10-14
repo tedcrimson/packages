@@ -1,5 +1,6 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:authentication_repository/src/forms.dart';
+import 'package:authentication_repository/src/forms/string_form.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
