@@ -13,12 +13,14 @@ class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
     String lastNameKey,
     String emailKey,
     String passwordKey,
+    bool autoValidate,
   ) : super(
             FullNameSignUpState(
               firstNameKey: firstNameKey,
               lastNameKey: lastNameKey,
               emailKey: emailKey,
               passwordKey: passwordKey,
+              autoValidate: autoValidate,
             ),
             repository);
 
