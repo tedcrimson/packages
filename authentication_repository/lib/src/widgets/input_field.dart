@@ -10,8 +10,9 @@ class InputField<T extends AuthCubit> extends LoginBuilder<InputBuilder> {
   Widget build(BuildContext context) {
     String keyString = (key as ValueKey).value;
     return BlocBuilder<T, AuthState>(
-      // buildWhen: (previous, current) => previous.forms[keyString]?.form?.value != current.forms[keyString]?.form?.value,
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous.forms[keyString]?.form?.status != current.forms[keyString]?.form?.status,
+      // buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         var form = state.forms[keyString].form;
         if (builder != null) {
