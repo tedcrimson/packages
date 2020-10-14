@@ -13,8 +13,8 @@ class FullNameSignUpState extends AuthState {
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
   }) : super({
-          firstNameKey: FormEntity(firstName, (x) => StringFieldForm.dirty(x, true)),
-          lastNameKey: FormEntity(lastName, (x) => StringFieldForm.dirty(x, true)),
+          firstNameKey: FormEntity(firstName, StringFieldForm.constructor),
+          lastNameKey: FormEntity(lastName, StringFieldForm.constructor),
           emailKey: FormEntity(email, EmailForm.constructor),
           passwordKey: FormEntity(password, PasswordForm.constructor),
         }, status, autoValidate);

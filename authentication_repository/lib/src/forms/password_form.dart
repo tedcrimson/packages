@@ -17,10 +17,12 @@ class OneNumberError extends FieldError {
 }
 
 class PasswordForm extends StringFieldForm {
-  const PasswordForm.dirty(String value, bool requiredField) : super.dirty(value, requiredField);
+  const PasswordForm.dirty({String value, bool requiredField})
+      : super.dirty(value: value, requiredField: requiredField);
 
   const PasswordForm.pure({bool requiredField = false}) : super.pure(requiredField);
-  static constructor(String value, bool requiredField) => PasswordForm.dirty(value, requiredField);
+  static constructor(String value, bool requiredField) =>
+      PasswordForm.dirty(value: value, requiredField: requiredField);
 
   // static final _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
 

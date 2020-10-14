@@ -7,10 +7,10 @@ class EmailValidationError extends FieldError {
 }
 
 class EmailForm extends StringFieldForm {
-  const EmailForm.dirty(String value, bool requiredField) : super.dirty(value, requiredField);
+  const EmailForm.dirty({String value, bool requiredField}) : super.dirty(value: value, requiredField: requiredField);
   const EmailForm.pure({bool requiredField = false}) : super.pure(requiredField);
 
-  static constructor(String value, bool requiredField) => EmailForm.dirty(value, requiredField);
+  static constructor(String value, bool requiredField) => EmailForm.dirty(value: value, requiredField: requiredField);
 
   static final RegExp _emailRegExp = RegExp(
     // r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',

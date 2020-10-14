@@ -15,11 +15,12 @@ class UserInvalidError extends FieldError {
 }
 
 class UsernameForm extends StringFieldForm {
-  UsernameForm.dirty(String value, bool requiredField) : super.dirty(value, requiredField);
+  UsernameForm.dirty({String value, bool requiredField}) : super.dirty(value: value, requiredField: requiredField);
 
   UsernameForm.pure() : super.pure(true);
 
-  static constructor(String value, bool requiredField) => UsernameForm.dirty(value, requiredField);
+  static constructor(String value, bool requiredField) =>
+      UsernameForm.dirty(value: value, requiredField: requiredField);
 
   @override
   FieldError validator(String value) {
