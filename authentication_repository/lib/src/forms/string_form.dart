@@ -9,7 +9,7 @@ class StringFieldForm extends FieldForm<String> {
 
   @override
   FieldError validator(String value) {
-    if (value == null && pure) return null; //TODO: aronou do something
+    if (value == null) return null; //TODO: aronou do something
     if (requiredField && value.isEmpty) {
       return FieldRequiredError();
     }
