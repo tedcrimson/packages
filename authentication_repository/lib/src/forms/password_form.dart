@@ -28,7 +28,9 @@ class PasswordForm extends StringFieldForm {
   @override
   FieldError validator(String value) {
     var error = super.validator(value);
-    if (value.length < 8 && value.isNotEmpty) {
+    if (error == null && value == null)
+      error = null;
+    else if (value.length < 8 && value.isNotEmpty) {
       error = MoreThanEightError();
     } else if (!value.contains(RegExp(r'[A-Z]'))) {
       error = OneCapitalError();
