@@ -13,7 +13,7 @@ class InputField<T extends AuthCubit> extends LoginBuilder<InputBuilder> {
       buildWhen: (previous, current) {
         var oldForm = previous.forms[keyString]?.form;
         var newForm = current.forms[keyString]?.form;
-        return oldForm.status != newForm.status || oldForm.error != newForm.error;
+        return oldForm?.value != newForm?.value; //|| oldForm?.errorText != newForm?.errorText;
       },
       // buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
