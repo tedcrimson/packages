@@ -23,16 +23,18 @@ class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
             repository);
 
   @override
-  Future<void> callAction() async {
-    if (!state.status.isValidated) return;
+  Future<bool> callAction() async {
+    if (!(await super.callAction())) return false;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await authenticationRepository.signUp(
         fields: [state.firstName.value, state.lastName.value, state.email.value, state.password.value],
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      return true;
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }
+    return false;
   }
 }

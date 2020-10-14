@@ -25,7 +25,7 @@ class AuthButton<T extends AuthCubit> extends LoginBuilder<ButtonBuilder> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 color: const Color(0xFFFFD600),
-                onPressed: state.status.isValidated ? () => context.bloc<T>().callAction() : null,
+                onPressed: state.status.isValidated ? context.bloc<T>().callAction : null,
               );
       },
     );

@@ -23,8 +23,8 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
             repository);
 
   @override
-  Future<void> callAction() async {
-    if (!state.status.isValidated) return;
+  Future<bool> callAction() async {
+    if (!(await super.callAction())) return false;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await authenticationRepository.logInWithEmailAndPassword(
@@ -32,8 +32,10 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
         password: state.password.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      return true;
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }
+    return false;
   }
 }

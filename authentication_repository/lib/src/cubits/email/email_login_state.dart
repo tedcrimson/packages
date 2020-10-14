@@ -7,12 +7,14 @@ class EmailLoginState extends AuthState {
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
     FormzStatus status = FormzStatus.pure,
+    bool autoValidate = false,
   }) : super(
           {
             emailKey: FormEntity(email, EmailForm.constructor),
             passwordKey: FormEntity(password, PasswordForm.constructor)
           },
           status,
+          autoValidate,
         );
 
   final EmailForm email;
@@ -24,6 +26,7 @@ class EmailLoginState extends AuthState {
   AuthState copyWith({
     Map<String, FormEntity> forms = const {},
     FormzStatus status,
+    bool autoValidate,
   }) {
     return EmailLoginState(
       emailKey: emailKey,
@@ -31,6 +34,7 @@ class EmailLoginState extends AuthState {
       email: forms[emailKey]?.form ?? this.email,
       password: forms[passwordKey]?.form ?? this.password,
       status: status ?? this.status,
+      autoValidate: autoValidate ?? this.autoValidate,
     );
   }
 }

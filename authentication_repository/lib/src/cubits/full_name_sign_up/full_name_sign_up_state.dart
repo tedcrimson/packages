@@ -11,12 +11,13 @@ class FullNameSignUpState extends AuthState {
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
     FormzStatus status = FormzStatus.pure,
+    bool autoValidate = false,
   }) : super({
           firstNameKey: FormEntity(firstName, (x) => StringFieldForm.dirty(x, true)),
           lastNameKey: FormEntity(lastName, (x) => StringFieldForm.dirty(x, true)),
           emailKey: FormEntity(email, EmailForm.constructor),
           passwordKey: FormEntity(password, PasswordForm.constructor),
-        }, status);
+        }, status, autoValidate);
 
   final EmailForm email;
   final String emailKey;
@@ -31,6 +32,7 @@ class FullNameSignUpState extends AuthState {
   AuthState copyWith({
     Map<String, FormEntity> forms = const {},
     FormzStatus status,
+    bool autoValidate,
   }) {
     return FullNameSignUpState(
       firstNameKey: firstNameKey,
@@ -42,6 +44,7 @@ class FullNameSignUpState extends AuthState {
       email: forms[emailKey]?.form ?? this.email,
       password: forms[passwordKey]?.form ?? this.password,
       status: status ?? this.status,
+      autoValidate: autoValidate ?? this.autoValidate,
     );
   }
 }

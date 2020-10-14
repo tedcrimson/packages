@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:authentication_repository/src/forms.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 
 part 'auth_state.dart';
@@ -28,13 +29,31 @@ abstract class AuthCubit<T extends AuthState> extends Cubit<T> {
         valid.add(value.form);
       }
     });
-    var stat = Formz.validate(valid);
     var newState = state.copyWith(
       forms: changes,
-      status: stat,
     );
+    if (state.autoValidate) {
+      var stat = Formz.validate(valid);
+
+      newState = newState.copyWith(
+        status: stat,
+      );
+    }
     emit(newState);
   }
 
-  Future<void> callAction();
+  @mustCallSuper
+  Future<bool> callAction() {
+    List<FieldForm> valid = [];
+    state.forms.forEach((k, value) {
+      valid.add(value.form);
+    });
+    var status = Formz.validate(valid);
+    if (status.isValid) {
+      return Future.value(true);
+    } else {
+      emit(state.copyWith(autoValidate: true));
+      return Future.value(false);
+    }
+  }
 }
