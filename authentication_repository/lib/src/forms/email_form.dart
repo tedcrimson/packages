@@ -19,7 +19,9 @@ class EmailForm extends StringFieldForm {
   );
 
   @override
-  EmailValidationError validator(String value) {
-    return value == null || _emailRegExp.hasMatch(value) ? null : EmailValidationError();
+  FieldError validator(String value) {
+    var error = super.validator(value);
+    if (error != null) error = value == null || _emailRegExp.hasMatch(value) ? null : EmailValidationError();
+    return error;
   }
 }

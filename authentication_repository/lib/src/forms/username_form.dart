@@ -23,11 +23,13 @@ class UsernameForm extends StringFieldForm {
 
   @override
   FieldError validator(String value) {
+    var error = super.validator(value);
     if (value != null) {
       if (value.length < 4) {
-        return UserShortError();
+        error = UserShortError();
       }
-    }
-    return UserInvalidError();
+    } else
+      error = UserInvalidError();
+    return error;
   }
 }
