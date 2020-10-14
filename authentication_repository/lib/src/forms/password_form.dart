@@ -29,14 +29,14 @@ class PasswordForm extends StringFieldForm {
   @override
   FieldError validator(String value) {
     var error = super.validator(value);
-    if (error == null && value == null)
-      error = null;
-    else if (value.length < 8 && value.isNotEmpty) {
-      error = MoreThanEightError();
-    } else if (!value.contains(RegExp(r'[A-Z]'))) {
-      error = OneCapitalError();
-    } else if (!value.contains(RegExp(r'\d'))) {
-      error = OneNumberError();
+    if (error == null) {
+      if (value.length < 8 && value.isNotEmpty) {
+        error = MoreThanEightError();
+      } else if (!value.contains(RegExp(r'[A-Z]'))) {
+        error = OneCapitalError();
+      } else if (!value.contains(RegExp(r'\d'))) {
+        error = OneNumberError();
+      }
     }
 
     return error;

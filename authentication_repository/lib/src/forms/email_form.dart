@@ -21,7 +21,7 @@ class EmailForm extends StringFieldForm {
   FieldError validator(String value) {
     var error = super.validator(value);
     if (error == null) {
-      error = value == null || _emailRegExp.hasMatch(value) ? null : EmailValidationError();
+      error = _emailRegExp.hasMatch(value) ? null : EmailValidationError();
     }
     return error;
   }
