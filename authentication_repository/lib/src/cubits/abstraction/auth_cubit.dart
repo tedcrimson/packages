@@ -15,11 +15,11 @@ abstract class AuthCubit<T extends AuthState> extends Cubit<T> {
 
   // void credentialChanged(String value);
 
-  void formChange<TT extends CredentialForm>(String key, dynamic value) {
-    CredentialForm dirty = state.forms[key].dirtyFunc(value);
+  void formChange<TT extends FieldForm>(String key, dynamic value) {
+    FieldForm dirty = state.forms[key].dirtyFunc(value);
     var changes = Map<String, FormEntity>.from(state.forms);
     changes[key] = state.forms[key].copyWith(dirty);
-    List<CredentialForm> valid = [];
+    List<FieldForm> valid = [];
     state.forms.forEach((k, value) {
       if (k == key) {
         valid.add(dirty);

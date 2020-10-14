@@ -1,30 +1,19 @@
-import 'credential_form.dart';
+import 'package:formz/formz.dart';
 
-enum FieldError {
-  isRequired,
+abstract class FieldError {
+  String get text;
 }
 
-class FieldForm extends CredentialForm<FieldError> {
-  const FieldForm.dirty(String value, {this.requiredField = false}) : super.dirty(value);
+class FieldRequiredError extends FieldError {
+  @override
+  String get text => 'field_is_required';
+}
 
-  static constructor(String value, bool requiredField) => FieldForm.dirty(value, requiredField: requiredField);
+abstract class FieldForm<T> extends FormzInput<T, FieldError> {
+  const FieldForm.dirty(T value, this.requiredField) : super.dirty(value);
 
-  const FieldForm.pure({this.requiredField = false}) : super.pure();
+  const FieldForm.pure(this.requiredField) : super.pure(null);
 
   final bool requiredField;
-
-  @override
-  String get errorText {
-    switch (error) {
-      case FieldError.isRequired:
-        return 'Is Required';
-    }
-    return null;
-  }
-
-  @override
-  FieldError validator(String value) {
-    if (value == null) return null;
-    return requiredField && value.isEmpty ? FieldError.isRequired : null;
-  }
+  String get errorText => this.pure ? null : error?.text;
 }

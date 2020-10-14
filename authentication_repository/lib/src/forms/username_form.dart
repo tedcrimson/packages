@@ -1,33 +1,33 @@
-import 'credential_form.dart';
+import 'package:authentication_repository/src/forms/string_form.dart';
+
+import 'field_form.dart';
 
 enum UsernameValidationError { invalid, isShort }
 
-class UsernameForm extends CredentialForm<UsernameValidationError> {
-  const UsernameForm.dirty([String value = '']) : super.dirty(value);
+class UserShortError extends FieldError {
+  @override
+  String get text => 'Is Short';
+}
 
-  static constructor(String value) => UsernameForm.dirty(value);
+class UserInvalidError extends FieldError {
+  @override
+  String get text => 'not correct';
+}
 
-  const UsernameForm.pure() : super.pure();
+class UsernameForm extends StringFieldForm {
+  UsernameForm.dirty({String value = ''}) : super.dirty(value, true);
+
+  UsernameForm.pure() : super.pure(true);
+
+  static constructor(String value, bool requiredField) => UsernameForm.dirty(value: value);
 
   @override
-  String get errorText {
-    switch (error) {
-      case UsernameValidationError.isShort:
-        return 'Is Short';
-      case UsernameValidationError.invalid:
-        return 'not correct';
-    }
-    return null;
-  }
-
-  @override
-  UsernameValidationError validator(String value) {
+  FieldError validator(String value) {
     if (value != null) {
       if (value.length < 4) {
-        return UsernameValidationError.isShort;
+        return UserShortError();
       }
     }
-    return UsernameValidationError.invalid;
-    // return _emailRegExp.hasMatch(value) ? null : EmailValidationError.invalid;
+    return UserInvalidError();
   }
 }

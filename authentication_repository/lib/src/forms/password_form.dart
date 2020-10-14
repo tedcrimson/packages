@@ -1,53 +1,45 @@
-import 'credential_form.dart';
+import 'package:authentication_repository/src/forms/field_form.dart';
+import 'package:authentication_repository/src/forms/string_form.dart';
 
-enum PasswordValidationError {
-  morethaneight,
-  onecapital,
-  onenumber,
-  isempty,
+class MoreThanEightError extends FieldError {
+  @override
+  String get text => 'Password should contains more then 8 character';
 }
 
-class PasswordForm extends CredentialForm<PasswordValidationError> {
-  const PasswordForm.dirty([String value = '']) : super.dirty(value);
-
-  static constructor(String value) => PasswordForm.dirty(value);
-
-  const PasswordForm.pure() : super.pure();
-
+class OneCapitalError extends FieldError {
   @override
-  String get errorText {
-    String errorText;
-    switch (error) {
-      case PasswordValidationError.morethaneight:
-        errorText = 'Password should contains more then 8 character';
-        break;
-      case PasswordValidationError.onecapital:
-        errorText = 'Password should contain at least one capital letter';
-        break;
-      case PasswordValidationError.onenumber:
-        errorText = 'Password should contain at least one number';
-        break;
-      case PasswordValidationError.isempty:
-        errorText = 'Password is empty';
-        break;
-    }
-    return errorText;
-  }
+  String get text => 'Password should contain at least one capital letter';
+}
+
+class OneNumberError extends FieldError {
+  @override
+  String get text => 'Password should contain at least one number';
+}
+
+class PasswordForm extends StringFieldForm {
+  const PasswordForm.dirty({String value = '', bool requiredField = false}) : super.dirty(value, requiredField);
+
+  const PasswordForm.pure({bool requiredField = false}) : super.pure(requiredField);
+  static constructor(String value, bool requiredField) =>
+      PasswordForm.dirty(value: value, requiredField: requiredField);
 
   // static final _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
 
   @override
-  PasswordValidationError validator(String value) {
-    PasswordValidationError error;
+  FieldError validator(String value) {
+    var error;
     if (value == null) {
       error = null;
-    } else if (value.isEmpty) {
-      error = PasswordValidationError.isempty;
+    }
+    if (requiredField) {
+      error = super.validator(value);
     } else if (value.length < 8 && value.isNotEmpty) {
-      error = PasswordValidationError.morethaneight;
+      error = MoreThanEightError();
     } else if (!value.contains(RegExp(r'[A-Z]'))) {
-      error = PasswordValidationError.onecapital;
-    } else if (!value.contains(RegExp(r'\d'))) error = PasswordValidationError.onenumber;
+      error = OneCapitalError();
+    } else if (!value.contains(RegExp(r'\d'))) {
+      error = OneNumberError();
+    }
 
     return error;
   }

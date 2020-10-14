@@ -1,13 +1,17 @@
-import 'credential_form.dart';
+import 'package:authentication_repository/src/forms/field_form.dart';
+import 'package:authentication_repository/src/forms/string_form.dart';
 
-enum EmailValidationError { invalid }
+class EmailValidationError extends FieldError {
+  @override
+  String get text => 'enter_valid_email';
+}
 
-class EmailForm extends CredentialForm<EmailValidationError> {
-  const EmailForm.dirty([String value = '']) : super.dirty(value);
+class EmailForm extends StringFieldForm {
+  const EmailForm.dirty({String value = '', bool requiredField = false}) : super.dirty(value, requiredField);
 
-  static constructor(String value) => EmailForm.dirty(value);
+  const EmailForm.pure({bool requiredField = false}) : super.pure(requiredField);
 
-  const EmailForm.pure() : super.pure();
+  static constructor(String value, bool requiredField) => EmailForm.dirty(value: value, requiredField: requiredField);
 
   static final RegExp _emailRegExp = RegExp(
     // r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
@@ -16,14 +20,6 @@ class EmailForm extends CredentialForm<EmailValidationError> {
 
   @override
   EmailValidationError validator(String value) {
-    return value == null || _emailRegExp.hasMatch(value) ? null : EmailValidationError.invalid;
-  }
-
-  String get errorText {
-    switch (error) {
-      case EmailValidationError.invalid:
-        return 'Enter Valid Email';
-    }
-    return null;
+    return value == null || _emailRegExp.hasMatch(value) ? null : EmailValidationError();
   }
 }

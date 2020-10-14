@@ -6,23 +6,23 @@ class FullNameSignUpState extends AuthState {
     @required this.lastNameKey,
     @required this.emailKey,
     @required this.passwordKey,
-    this.firstName = const FieldForm.pure(requiredField: true),
-    this.lastName = const FieldForm.pure(requiredField: true),
+    this.firstName = const StringFieldForm.pure(true),
+    this.lastName = const StringFieldForm.pure(true),
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
     FormzStatus status = FormzStatus.pure,
   }) : super({
-          firstNameKey: FormEntity(firstName, (x) => FieldForm.dirty(x, requiredField: true)),
-          lastNameKey: FormEntity(lastName, (x) => FieldForm.dirty(x, requiredField: true)),
+          firstNameKey: FormEntity(firstName, (x) => StringFieldForm.dirty(x, true)),
+          lastNameKey: FormEntity(lastName, (x) => StringFieldForm.dirty(x, true)),
           emailKey: FormEntity(email, EmailForm.constructor),
           passwordKey: FormEntity(password, PasswordForm.constructor),
         }, status);
 
   final EmailForm email;
   final String emailKey;
-  final FieldForm firstName;
+  final StringFieldForm firstName;
   final String firstNameKey;
-  final FieldForm lastName;
+  final StringFieldForm lastName;
   final String lastNameKey;
   final PasswordForm password;
   final String passwordKey;
