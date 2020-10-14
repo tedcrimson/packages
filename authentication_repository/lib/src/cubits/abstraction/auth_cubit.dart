@@ -52,7 +52,7 @@ abstract class AuthCubit<T extends AuthState> extends Cubit<T> {
     if (status.isValid) {
       return Future.value(true);
     } else {
-      emit(state.copyWith(autoValidate: true));
+      emit(state.copyWith(autoValidate: true, status: FormzStatus.invalid));
       return Future.value(false);
     }
   }
