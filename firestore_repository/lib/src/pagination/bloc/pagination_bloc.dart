@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
@@ -6,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 part 'pagination_event.dart';
 part 'pagination_state.dart';
 
-typedef Converter<T> = Future<T> Function(DocumentSnapshot snapshot);
+typedef Converter<T> = FutureOr<T> Function(DocumentSnapshot snapshot);
 
 class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
   PaginationBloc(this.query, this.converter, {this.limit = 20}) : super(PaginationInitial());
