@@ -6,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 part 'pagination_event.dart';
 part 'pagination_state.dart';
 
-typedef Converter<T> = T Function(DocumentSnapshot snapshot);
+typedef Converter<T> = Future<T> Function(DocumentSnapshot snapshot);
 
 class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
   PaginationBloc(this.query, this.converter, {this.limit = 20}) : super(PaginationInitial());
@@ -25,9 +25,11 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
           final rawdata = await _fetchPaginations(null, limit);
           final last = rawdata.isNotEmpty ? rawdata.last : null;
 
-          final data = rawdata.map((rawPagination) {
-            return converter(rawPagination);
-          }).toList();
+          final data = <T>[];
+          for (var raw in rawdata) {
+            var converted = await converter(raw);
+            data.add(converted);
+          }
           yield PaginationSuccess<T>(data: data, hasReachedMax: data.length <= limit, lastSnapshot: last);
           return;
         }
@@ -43,9 +45,12 @@ class PaginationBloc<T> extends Bloc<PaginationEvent, PaginationState> {
   Stream<PaginationSuccess<T>> _mapPaginationSuccess(PaginationSuccess<T> currentState) async* {
     final rawdata = await _fetchPaginations(currentState.lastSnapshot, limit);
     final last = rawdata.isNotEmpty ? rawdata.last : currentState.lastSnapshot;
-    final data = rawdata.map((rawPagination) {
-      return converter(rawPagination);
-    }).toList();
+
+    final data = <T>[];
+    for (var raw in rawdata) {
+      var converted = await converter(raw);
+      data.add(converted);
+    }
     if (data.isEmpty) {
       yield currentState.copyWith(hasReachedMax: true, lastSnapshot: last);
     } else
