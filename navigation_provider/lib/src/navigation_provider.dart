@@ -51,9 +51,17 @@ class NavigatorProvider<R extends PageRoute> {
     return navigatorState.pushReplacement<T1, T2>(_routes[R](page));
   }
 
-  PersistentBottomSheetController showBottomPanel<T>(Widget widget, {bool popLast = false}) {
+  showBottomPanel<T>(Widget widget, {bool popLast = false}) {
     if (popLast) pop();
-    return showBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
+    if (R is CupertinoPageRoute)
+      showCupertinoModalPopup(
+        context: navigatorState.context,
+        builder: (BuildContext context) {
+          return widget;
+        },
+      );
+    else
+      showBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
   }
 
   // showBottomPanel(Widget widget,
