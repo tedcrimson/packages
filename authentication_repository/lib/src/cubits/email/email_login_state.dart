@@ -6,8 +6,8 @@ class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends Auth
     @required this.passwordKey,
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
-    Function(String, bool) emailDirtyFunction,
-    Function(String, bool) passwordDirtyFunction,
+    this.emailDirtyFunction,
+    this.passwordDirtyFunction,
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
   }) : super(
@@ -29,6 +29,8 @@ class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends Auth
   final String emailKey;
   final PasswordForm password;
   final String passwordKey;
+  final Function(String, bool) emailDirtyFunction;
+  final Function(String, bool) passwordDirtyFunction;
 
   @override
   AuthState copyWith({
@@ -41,6 +43,8 @@ class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends Auth
       passwordKey: passwordKey,
       email: forms[emailKey]?.form ?? this.email,
       password: forms[passwordKey]?.form ?? this.password,
+      emailDirtyFunction: this.emailDirtyFunction,
+      passwordDirtyFunction: this.passwordDirtyFunction,
       status: status ?? this.status,
       autoValidate: autoValidate ?? this.autoValidate,
     );
