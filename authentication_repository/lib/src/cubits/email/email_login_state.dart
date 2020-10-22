@@ -6,12 +6,21 @@ class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends Auth
     @required this.passwordKey,
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
-    Function(String, bool) emailDirtyFunction = EmailForm.constructor,
-    Function(String, bool) passwordDirtyFunction = PasswordForm.constructor,
+    Function(String, bool) emailDirtyFunction,
+    Function(String, bool) passwordDirtyFunction,
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
   }) : super(
-          {emailKey: FormEntity(email, emailDirtyFunction), passwordKey: FormEntity(password, passwordDirtyFunction)},
+          {
+            emailKey: FormEntity(
+              email,
+              emailDirtyFunction ?? EmailForm.constructor,
+            ),
+            passwordKey: FormEntity(
+              password,
+              passwordDirtyFunction ?? PasswordForm.constructor,
+            )
+          },
           status,
           autoValidate,
         );
