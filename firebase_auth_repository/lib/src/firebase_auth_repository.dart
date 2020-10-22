@@ -4,6 +4,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
+// 1.0
 class FirebaseAuthenticationRepository<T> extends AuthenticationRepository<User, T> {
   FirebaseAuthenticationRepository({
     FirebaseAuth firebaseAuth,
