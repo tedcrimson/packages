@@ -1,18 +1,17 @@
 part of 'email_login_cubit.dart';
 
-class EmailLoginState extends AuthState {
+class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends AuthState {
   EmailLoginState({
     @required this.emailKey,
     @required this.passwordKey,
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
+    Function(String, bool) emailDirtyFunction = EmailForm.constructor,
+    Function(String, bool) passwordDirtyFunction = PasswordForm.constructor,
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
   }) : super(
-          {
-            emailKey: FormEntity(email, EmailForm.constructor),
-            passwordKey: FormEntity(password, PasswordForm.constructor)
-          },
+          {emailKey: FormEntity(email, emailDirtyFunction), passwordKey: FormEntity(password, passwordDirtyFunction)},
           status,
           autoValidate,
         );
