@@ -23,6 +23,7 @@ typedef Widget LoadingBuilder<T>(
 class NavigatorProvider<R extends PageRoute> {
   NavigatorProvider(
     this.navigatorState, {
+    @required Widget child,
     this.popupBuilder,
     this.loadingBuilder,
     this.confirmText = 'close',
@@ -35,33 +36,18 @@ class NavigatorProvider<R extends PageRoute> {
   final PopupBuilder popupBuilder;
   final LoadingBuilder loadingBuilder;
 
-  Map<Type, Function> _routes = <Type, Function>{
-    CupertinoPageRoute: (page) => CupertinoPageRoute(builder: (context) => page),
-    MaterialPageRoute: (page) => MaterialPageRoute(builder: (context) => page),
-  };
-
-  Future<T> pushPage<T>(Widget page, {bool root = true}) async {
-    return navigatorState.push<T>(_routes[R](page));
-  }
-
-  Future<T1> replacePage<T1, T2>(Widget page, {bool root = false, bool replaceAll = false}) {
-    if (replaceAll) {
-      navigatorState.popUntil((x) => x.isFirst);
-    }
-    return navigatorState.pushReplacement<T1, T2>(_routes[R](page));
-  }
-
   showBottomPanel<T>(Widget widget, {bool popLast = false}) {
     if (popLast) pop();
-    if (R is CupertinoPageRoute)
+    if (R is MaterialPageRoute<dynamic>)
+      showBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
+    else
       showCupertinoModalPopup(
         context: navigatorState.context,
+        barrierColor: Colors.black54,
         builder: (BuildContext context) {
           return widget;
         },
       );
-    else
-      showBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
   }
 
   // showBottomPanel(Widget widget,
@@ -70,14 +56,6 @@ class NavigatorProvider<R extends PageRoute> {
   //   showModalBottomSheetApp(
   //       context: context, widget: widget, resizeToAvoidBottomPadding: false);
   // }
-
-  Future<T1> replacePageWithName<T1, T2>(String routeName, {bool root = false, Object args}) {
-    return navigatorState.pushReplacementNamed<T1, T2>(routeName, arguments: args);
-  }
-
-  Future<T> pushPageWithName<T>(String routeName, {bool root = false, Object args}) {
-    return navigatorState.pushNamed<T>(routeName, arguments: args);
-  }
 
   Future<T> loadRoute<T>(BuildContext context,
       {Future<T> Function() onLoad,
@@ -138,5 +116,35 @@ class NavigatorProvider<R extends PageRoute> {
 
   void pop() {
     navigatorState.pop();
+  }
+}
+
+extension BuildContextExt on BuildContext {
+  // static Map<Type, Function> _routes = <Type, Function>{
+  //   CupertinoPageRoute: (page) => CupertinoPageRoute(builder: (context) => page),
+  //   MaterialPageRoute: (page) => ),
+  // };
+  // static Function _getRoute(BuildContext context) {
+  //   return _routes[NavigatorProvider.of(context).type];
+  // }
+
+  Future<T> pushPage<T>(Widget page, {bool root = true}) async {
+    return Navigator.of(this).push<T>(MaterialPageRoute(builder: (context) => page));
+  }
+
+  Future<T1> replacePage<T1, T2>(Widget page, {bool root = false, bool replaceAll = false}) {
+    NavigatorState navigatorState = Navigator.of(this);
+    if (replaceAll) {
+      navigatorState.popUntil((x) => x.isFirst);
+    }
+    return navigatorState.pushReplacement<T1, T2>(MaterialPageRoute(builder: (context) => page));
+  }
+
+  Future<T1> replacePageWithName<T1, T2>(String routeName, {bool root = false, Object args}) {
+    return Navigator.of(this).pushReplacementNamed<T1, T2>(routeName, arguments: args);
+  }
+
+  Future<T> pushPageWithName<T>(String routeName, {bool root = false, Object args}) {
+    return Navigator.of(this).pushNamed<T>(routeName, arguments: args);
   }
 }
