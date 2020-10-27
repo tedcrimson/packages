@@ -1,6 +1,6 @@
 part of 'email_login_cubit.dart';
 
-class EmailLoginState<T extends EmailForm, TT extends PasswordForm> extends AuthState {
+class EmailLoginState extends AuthState {
   EmailLoginState({
     @required this.emailKey,
     @required this.passwordKey,

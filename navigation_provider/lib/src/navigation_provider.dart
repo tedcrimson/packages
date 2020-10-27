@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:navigation_provider/src/loading_bloc.dart';
 
 typedef String LoadError(PlatformException e);
 
@@ -23,7 +26,6 @@ typedef Widget LoadingBuilder<T>(
 class NavigatorProvider<R extends PageRoute> {
   NavigatorProvider(
     this.navigatorState, {
-    @required Widget child,
     this.popupBuilder,
     this.loadingBuilder,
     this.confirmText = 'close',
@@ -36,12 +38,12 @@ class NavigatorProvider<R extends PageRoute> {
   final PopupBuilder popupBuilder;
   final LoadingBuilder loadingBuilder;
 
-  showBottomPanel<T>(Widget widget, {bool popLast = false}) {
+  Future<T> showBottomPanel<T>(Widget widget, {bool popLast = false}) {
     if (popLast) pop();
-    if (R is MaterialPageRoute<dynamic>)
-      showBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
-    else
-      showCupertinoModalPopup(
+    if (R is MaterialPageRoute<dynamic>) {
+      return showModalBottomSheet<T>(context: navigatorState.context, builder: (BuildContext context) => widget);
+    } else
+      return showCupertinoModalPopup<T>(
         context: navigatorState.context,
         barrierColor: Colors.black54,
         builder: (BuildContext context) {
@@ -58,10 +60,9 @@ class NavigatorProvider<R extends PageRoute> {
   // }
 
   Future<T> loadRoute<T>(BuildContext context,
-      {Future<T> Function() onLoad,
+      {@required Future<T> Function() onLoad,
       VoidCallback onTimeout,
       LoadError onError,
-      bool root = true,
       bool confirm = false,
       String confirmText,
       int duration = 20}) async {
@@ -69,14 +70,32 @@ class NavigatorProvider<R extends PageRoute> {
       bool res = await confirmPopup(confirmText: confirmText);
       if (!res) return null;
     }
-    var res = await navigatorState.push<T>(PageRouteBuilder(
-        maintainState: true,
-        barrierDismissible: false,
-        opaque: false,
-        pageBuilder: (context, Animation<double> animation, Animation<double> secondaryAnimation) {
-          return this.loadingBuilder(onLoad, onTimeout, onError, confirm, confirmText ?? this.confirmText, duration);
-        }));
-    return res;
+
+    context.bloc<LoadingBloc>().start();
+
+    T result;
+    try {
+      result = await onLoad();
+    } catch (e) {
+      if (onError != null) {
+        var _errorText = onError(e);
+        textPopup(
+          context,
+          _errorText,
+        );
+      }
+    } finally {
+      context.bloc<LoadingBloc>().end();
+    }
+
+    // var res = await navigatorState.push<T>(PageRouteBuilder(
+    //     maintainState: true,
+    //     barrierDismissible: false,
+    //     opaque: false,
+    //     pageBuilder: (context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    //       return this.loadingBuilder(onLoad, onTimeout, onError, confirm, confirmText ?? this.confirmText, duration);
+    //     }));
+    return result;
   }
 
   // Future<void> waitFor(BuildContext context, Duration duration) {
@@ -128,8 +147,8 @@ extension BuildContextExt on BuildContext {
   //   return _routes[NavigatorProvider.of(context).type];
   // }
 
-  Future<T> pushPage<T>(Widget page, {bool root = true}) async {
-    return Navigator.of(this).push<T>(MaterialPageRoute(builder: (context) => page));
+  Future<T> pushPage<T>(Widget page, {bool root = !kIsWeb}) async {
+    return Navigator.of(this, rootNavigator: root).push<T>(MaterialPageRoute(builder: (context) => page));
   }
 
   Future<T1> replacePage<T1, T2>(Widget page, {bool root = false, bool replaceAll = false}) {

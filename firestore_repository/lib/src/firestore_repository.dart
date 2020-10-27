@@ -4,19 +4,22 @@ part 'exceptions.dart';
 part 'query_filter.dart';
 
 class FirestoreRepository extends CRUDRepository {
-  FirestoreRepository({
-    FirebaseFirestore firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  FirestoreRepository({FirebaseFirestore firestore, bool persistenceEnabled = false})
+      : _firestore = firestore ?? FirebaseFirestore.instance {
+    _firestore.settings = Settings(persistenceEnabled: persistenceEnabled);
+  }
 
   final FirebaseFirestore _firestore;
   // final FirebaseAuthenticationRepository _auth;
 
-  Future<QuerySnapshot> getCollection(List fields,
+  DocumentReference doc(String path) => _firestore.doc(path);
+
+  Future<QuerySnapshot> getCollection(List<String> fields,
       {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit, GetOptions getOptions}) async {
     return getQuery(fields, filters: filters, startAfter: startAfter, limit: limit).get(getOptions);
   }
 
-  Query getQuery(List fields, {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit}) {
+  Query getQuery(List<String> fields, {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit}) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
     Query query = _firestore.collection(fields.join('/'));
@@ -49,31 +52,31 @@ class FirestoreRepository extends CRUDRepository {
     return query;
   }
 
-  Future<DocumentSnapshot> getDocument(List fields) {
+  Future<DocumentSnapshot> getDocument(List<String> fields) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return read(fields.join('/'));
   }
 
-  Future<void> addData(List fields, Map<String, dynamic> jsonData) {
+  Future<void> addData(List<String> fields, Map<String, dynamic> jsonData) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
     return create(fields.join('/'), jsonData);
   }
 
-  Future<void> setData(List fields, Map<String, dynamic> jsonData) {
+  Future<void> setData(List<String> fields, Map<String, dynamic> jsonData) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return _set(fields.join('/'), jsonData);
   }
 
-  Future<void> updateData(List fields, Map<String, dynamic> jsonData) {
+  Future<void> updateData(List<String> fields, Map<String, dynamic> jsonData) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return update(fields.join('/'), jsonData);
   }
 
-  Stream<DocumentSnapshot> listen(List fields) {
+  Stream<DocumentSnapshot> listen(List<String> fields) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
     return _firestore.doc(fields.join('/')).snapshots();
@@ -95,11 +98,11 @@ class FirestoreRepository extends CRUDRepository {
   }
 
   @override
-  Future update(String path, dynamic data) {
+  Future<void> update(String path, dynamic data) {
     return _firestore.doc(path).update(data);
   }
 
-  Future _set(String path, dynamic data) {
+  Future<void> _set(String path, dynamic data) {
     return _firestore.doc(path).set(data);
   }
 }

@@ -7,6 +7,8 @@ abstract class PaginationState extends Equatable {
   List<Object> get props => [];
 }
 
+class PaginationNotInitial extends PaginationState {}
+
 class PaginationInitial extends PaginationState {}
 
 class PaginationFailure extends PaginationState {}
@@ -38,4 +40,42 @@ class PaginationSuccess<T> extends PaginationState {
 
   @override
   String toString() => 'PaginationSuccess { data: ${data.length}, hasReachedMax: $hasReachedMax }';
+}
+
+class PaginationUpdate<T> extends PaginationSuccess<T> {
+  const PaginationUpdate({
+    this.updateTime,
+    List<T> data,
+    DocumentSnapshot lastSnapshot,
+    bool hasReachedMax,
+  }) : super(data: data, lastSnapshot: lastSnapshot, hasReachedMax: hasReachedMax);
+
+  factory PaginationUpdate.fromSuccess(PaginationSuccess<T> success) {
+    return PaginationUpdate(
+      updateTime: DateTime.now(),
+      data: success.data,
+      lastSnapshot: success.lastSnapshot,
+      hasReachedMax: success.hasReachedMax,
+    );
+  }
+  final DateTime updateTime;
+  PaginationUpdate<T> copyWith({
+    DateTime updateTime,
+    List<T> data,
+    bool hasReachedMax,
+    DocumentSnapshot lastSnapshot,
+  }) {
+    return PaginationUpdate<T>(
+      updateTime: updateTime ?? this.updateTime,
+      data: data ?? this.data,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      lastSnapshot: lastSnapshot ?? this.lastSnapshot,
+    );
+  }
+
+  @override
+  List<Object> get props => [updateTime, data, hasReachedMax, lastSnapshot];
+
+  @override
+  String toString() => 'PaginationUpdate { data: ${data.length} }';
 }

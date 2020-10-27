@@ -1,31 +1,62 @@
 part of 'full_name_sign_up_cubit.dart';
 
-class FullNameSignUpState extends AuthState {
-  FullNameSignUpState({
+class FullNameSignUpState<T extends EmailForm, P extends PasswordForm> extends AuthState {
+  factory FullNameSignUpState({
+    @required String firstNameKey,
+    @required String lastNameKey,
+    @required String emailKey,
+    @required String passwordKey,
+    StringFieldForm firstName,
+    StringFieldForm lastName,
+    T email,
+    P password,
+    FormzStatus status,
+    bool autoValidate,
+    Function(String, bool) emailDirtyFunction,
+    Function(String, bool) passwordDirtyFunction,
+  }) {
+    return FullNameSignUpState._(
+      firstNameKey: firstNameKey,
+      lastNameKey: lastNameKey,
+      emailKey: emailKey,
+      passwordKey: passwordKey,
+      firstName: firstName ?? const StringFieldForm.pure(true),
+      lastName: lastName ?? const StringFieldForm.pure(true),
+      email: email ?? const EmailForm.pure(),
+      password: password ?? const PasswordForm.pure(),
+      status: status ?? FormzStatus.pure,
+      autoValidate: autoValidate ?? false,
+      emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
+      passwordDirtyFunction: passwordDirtyFunction ?? PasswordForm.constructor,
+    );
+  }
+  FullNameSignUpState._({
     @required this.firstNameKey,
     @required this.lastNameKey,
     @required this.emailKey,
     @required this.passwordKey,
-    this.firstName = const StringFieldForm.pure(true),
-    this.lastName = const StringFieldForm.pure(true),
-    this.email = const EmailForm.pure(),
-    this.password = const PasswordForm.pure(),
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.password,
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
+    Function(String, bool) emailDirtyFunction,
+    Function(String, bool) passwordDirtyFunction,
   }) : super({
           firstNameKey: FormEntity(firstName, StringFieldForm.constructor),
           lastNameKey: FormEntity(lastName, StringFieldForm.constructor),
-          emailKey: FormEntity(email, EmailForm.constructor),
-          passwordKey: FormEntity(password, PasswordForm.constructor),
+          emailKey: FormEntity(email, emailDirtyFunction),
+          passwordKey: FormEntity(password, passwordDirtyFunction),
         }, status, autoValidate);
 
-  final EmailForm email;
+  final T email;
   final String emailKey;
   final StringFieldForm firstName;
   final String firstNameKey;
   final StringFieldForm lastName;
   final String lastNameKey;
-  final PasswordForm password;
+  final P password;
   final String passwordKey;
 
   @override
@@ -34,7 +65,7 @@ class FullNameSignUpState extends AuthState {
     FormzStatus status,
     bool autoValidate,
   }) {
-    return FullNameSignUpState(
+    return FullNameSignUpState<T, P>(
       firstNameKey: firstNameKey,
       lastNameKey: lastNameKey,
       emailKey: emailKey,

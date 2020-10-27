@@ -1,4 +1,4 @@
-name: navigation_provider
+name: firebase_chat
 description: A new Flutter package project.
 version: 0.0.1
 author:
@@ -11,13 +11,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bloc: ^6.1.0
-  flutter_bloc: ^6.0.6
-  equatable: ^1.2.5
+
+  # cloud_firestore: ^0.14.1
+  # bloc: ^6.0.3
+  # flutter_bloc: ^6.0.6
+  # equatable: ^1.2.5
+  # rxdart: ^0.24.1
+
+  photo_manager: ^0.5.8
+  flutter_pagewise: ^1.2.3
+  cached_network_image: ^2.3.3  
+  photo_view: ^0.10.2
   
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  firestore_repository:
+    path: ../firestore_repository
+    # git:
+    #   url: git@github.com:tedcrimson/packages.git
+    #   path: firestore_repository
+  firebase_storage_repository:
+    path: ../firebase_storage_repository
+    # git:
+    #   url: git@github.com:tedcrimson/packages.git
+    #   path: firebase_storage_repository
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
