@@ -23,8 +23,8 @@ class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
               emailKey: emailKey,
               passwordKey: passwordKey,
               autoValidate: autoValidate,
-              emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
-              passwordDirtyFunction: passwordDirtyFunction ?? PasswordForm.constructor,
+              emailDirtyFunction: emailDirtyFunction,
+              passwordDirtyFunction: passwordDirtyFunction,
             ),
             repository);
 
