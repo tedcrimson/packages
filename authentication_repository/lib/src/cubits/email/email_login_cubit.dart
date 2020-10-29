@@ -18,13 +18,14 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
     Function(String, bool) passwordDirtyFunction,
   }) : super(
             EmailLoginState(
-                emailKey: emailKey,
-                passwordKey: passwordKey,
-                email: email,
-                password: password,
-                autoValidate: autoValidate,
-                emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
-                passwordDirtyFunction: passwordDirtyFunction?? PasswordForm.constructor),
+              emailKey: emailKey,
+              passwordKey: passwordKey,
+              email: email,
+              password: password,
+              autoValidate: autoValidate,
+              emailDirtyFunction: emailDirtyFunction,
+              passwordDirtyFunction: passwordDirtyFunction,
+            ),
             repository);
 
   @override
