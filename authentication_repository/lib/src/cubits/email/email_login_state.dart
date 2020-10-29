@@ -14,11 +14,11 @@ class EmailLoginState extends AuthState {
           {
             emailKey: FormEntity(
               email,
-              emailDirtyFunction ?? EmailForm.constructor,
+              emailDirtyFunction,
             ),
             passwordKey: FormEntity(
               password,
-              passwordDirtyFunction ?? PasswordForm.constructor,
+              passwordDirtyFunction,
             )
           },
           status,

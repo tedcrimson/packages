@@ -23,8 +23,8 @@ class EmailLoginCubit extends AuthCubit<EmailLoginState> {
                 email: email,
                 password: password,
                 autoValidate: autoValidate,
-                emailDirtyFunction: emailDirtyFunction,
-                passwordDirtyFunction: passwordDirtyFunction),
+                emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
+                passwordDirtyFunction: passwordDirtyFunction?? PasswordForm.constructor),
             repository);
 
   @override

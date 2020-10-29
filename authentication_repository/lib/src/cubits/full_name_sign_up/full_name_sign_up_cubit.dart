@@ -14,6 +14,8 @@ class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
     String emailKey,
     String passwordKey,
     bool autoValidate,
+    Function(String, bool) emailDirtyFunction,
+    Function(String, bool) passwordDirtyFunction,
   ) : super(
             FullNameSignUpState(
               firstNameKey: firstNameKey,
@@ -21,6 +23,8 @@ class FullNameSignUpCubit extends AuthCubit<FullNameSignUpState> {
               emailKey: emailKey,
               passwordKey: passwordKey,
               autoValidate: autoValidate,
+              emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
+              passwordDirtyFunction: passwordDirtyFunction ?? PasswordForm.constructor,
             ),
             repository);
 

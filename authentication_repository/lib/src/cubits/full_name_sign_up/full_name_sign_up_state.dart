@@ -46,8 +46,8 @@ class FullNameSignUpState<T extends EmailForm, P extends PasswordForm> extends A
   }) : super({
           firstNameKey: FormEntity(firstName, StringFieldForm.constructor),
           lastNameKey: FormEntity(lastName, StringFieldForm.constructor),
-          emailKey: FormEntity(email, emailDirtyFunction ?? EmailForm.constructor),
-          passwordKey: FormEntity(password, passwordDirtyFunction ?? PasswordForm.constructor),
+          emailKey: FormEntity(email, emailDirtyFunction),
+          passwordKey: FormEntity(password, passwordDirtyFunction),
         }, status, autoValidate);
 
   final T email;
