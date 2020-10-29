@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:firebase_chat/chat/activity_repository.dart';
 import 'package:firebase_chat/models.dart';
 import 'package:firebase_chat/chat/chat_content.dart';
 import 'package:firebase_chat/gallery/gallery_view_item.dart';
 import 'package:firebase_chat/models/peer_user.dart';
-import 'package:firebase_storage_repository/firebase_storage_repository.dart';
 import 'package:firestore_repository/firestore_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,29 +15,32 @@ import '../utils/converter.dart' as converter;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'blocs/input/chat_input_cubit.dart';
-import 'chat_repository.dart';
 
-abstract class Chat extends StatefulWidget {
+abstract class BaseChat extends StatefulWidget {
   final String userId;
   final PeerUser peer;
   final String path;
+  // final ActivityRepository activityRepository;
 
-  Chat({
+  BaseChat({
     Key key,
     @required this.userId,
     @required this.peer,
     @required this.path,
+    // @required this.activityRepository,
   }) : super(key: key);
 
-  static ChatState of(BuildContext context) {
-    return context.ancestorStateOfType(const TypeMatcher<ChatState>());
+  static BaseChatState of(BuildContext context) {
+    return context.findAncestorStateOfType<BaseChatState>();
+
+    // onst TypeMatcher<ChatState>());
   }
 
   // @override
   // State createState() => new ChatScreenState();
 }
 
-abstract class ChatState extends State<Chat> {
+abstract class BaseChatState extends State<BaseChat> {
   PaginationBloc<ActivityLog> paginationBloc;
 
   String userId;
@@ -55,8 +58,8 @@ abstract class ChatState extends State<Chat> {
 
   final TextEditingController textEditingController = new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
-  Color randomColor = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
-  ChatRepository chatRepository;
+  // Color randomColor = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
+  ActivityRepository activityRepository;
   ChatInputCubit chatInputCubit;
 
   @override
@@ -64,16 +67,12 @@ abstract class ChatState extends State<Chat> {
     super.initState();
     this.userId = widget.userId;
 
-    chatRepository = ChatRepository(
-      widget.path,
-      firestoreRepository: context.repository<FirestoreRepository>(),
-      storageRepository: context.repository<FirebaseStorageRepository>(),
-    );
+    activityRepository = ActivityRepository(widget.path);
 
     chatInputCubit = ChatInputCubit(
       userFrom: userId,
       userTo: widget.peer.id,
-      chatRepository: chatRepository,
+      activityRepository: activityRepository,
       textController: textEditingController,
       scrollController: listScrollController,
     );
@@ -86,7 +85,7 @@ abstract class ChatState extends State<Chat> {
 
     _getTyping();
 
-    _imagesSubscription = chatRepository.getChatImages(chatRepository.reference).listen((onData) {
+    _imagesSubscription = activityRepository.getChatImages(activityRepository.reference).listen((onData) {
       bool init = onData.docChanges.length > 1;
       for (var snap in onData.docChanges) {
         switch (snap.type) {
@@ -138,7 +137,7 @@ abstract class ChatState extends State<Chat> {
   }
 
   _getTyping() {
-    _typingSubscription = chatRepository.reference.snapshots().listen((onData) {
+    _typingSubscription = activityRepository.reference.snapshots().listen((onData) {
       if (onData.exists && onData.data().containsKey(widget.peer.id)) {
         // setState(() {
         isPeerTyping = onData.data()[widget.peer.id];
@@ -175,7 +174,7 @@ abstract class ChatState extends State<Chat> {
       peerImage: userImage,
       isPeerTyping: isPeerTyping,
       images: images,
-      chatRepository: chatRepository,
+      activityRepository: activityRepository,
       loadingWidget: loadingWidget,
       primaryColor: primaryColor,
     );

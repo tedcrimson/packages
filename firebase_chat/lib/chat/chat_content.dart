@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:firebase_chat/chat/activity_repository.dart';
 import 'package:firebase_chat/models.dart';
 import 'package:firebase_chat/chat/chat_avatar.dart';
-import 'package:firebase_chat/chat/chat_repository.dart';
 import 'package:firebase_chat/chat/image_activity_widget.dart';
 import 'package:firebase_chat/chat/text_activity_widget.dart';
 import 'package:firebase_chat/gallery/gallery_view_item.dart';
@@ -24,7 +24,7 @@ class ChatActivityWidget extends StatelessWidget {
   final Radius corner = const Radius.circular(18.0);
   final Radius flat = const Radius.circular(5.0);
   final AssetImage typingGif;
-  final ChatRepository chatRepository;
+  final ActivityRepository activityRepository;
   final Color primaryColor;
   final Widget loadingWidget;
   const ChatActivityWidget({
@@ -38,9 +38,9 @@ class ChatActivityWidget extends StatelessWidget {
     this.peerImage,
     this.isPeerTyping,
     this.images,
-    this.chatRepository,
+    this.activityRepository,
     this.loadingWidget,
-    this.typingGif = const AssetImage('assets/typing3.gif'),
+    this.typingGif = const AssetImage('assets/typing.gif'),
   }) : super(key: key);
 
   bool get typingWidget => i == 0 && isPeerTyping;
@@ -52,7 +52,7 @@ class ChatActivityWidget extends StatelessWidget {
 
     // print("OLA");
     if (!isMe && activityLog.seenStatus == SeenStatus.Recieved) {
-      chatRepository.changeSeenStatus(activityLog.path, SeenStatus.Seen);
+      activityRepository.changeSeenStatus(activityLog.path, SeenStatus.Seen);
     }
 
     return Column(
@@ -71,28 +71,29 @@ class ChatActivityWidget extends StatelessWidget {
                     peer: peer,
                     userImage: peerImage,
                   ),
-
-                  Material(
-                      color: isMe && activityLog is TextActivity ? primaryColor : Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: (isMe) || (!isMe && isLastMessageLeft(index + 2)) ? corner : flat,
-                        topRight: (isMe && isLastMessageRight(index + 2)) || (!isMe) ? corner : flat,
-                        bottomRight: isMe && isLastMessageRight(index) || (!isMe) ? corner : flat,
-                        bottomLeft: isMe || (!isMe && isLastMessageLeft(index) && !(isPeerTyping && index != i))
-                            ? corner
-                            : flat,
-                      ),
-                      elevation: 2,
-                      clipBehavior: Clip.hardEdge,
-                      child: typingWidget
-                          ? Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Image(
-                                image: typingGif,
-                                height: 40,
-                                // fit: BoxFit.contain,
-                              ))
-                          : _drawMessage(activityLog, isMe)),
+                  Flexible(
+                    child: Material(
+                        color: isMe && activityLog is TextActivity ? primaryColor : Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: (isMe) || (!isMe && isLastMessageLeft(index + 2)) ? corner : flat,
+                          topRight: (isMe && isLastMessageRight(index + 2)) || (!isMe) ? corner : flat,
+                          bottomRight: isMe && isLastMessageRight(index) || (!isMe) ? corner : flat,
+                          bottomLeft: isMe || (!isMe && isLastMessageLeft(index) && !(isPeerTyping && index != i))
+                              ? corner
+                              : flat,
+                        ),
+                        elevation: 2,
+                        clipBehavior: Clip.hardEdge,
+                        child: typingWidget
+                            ? Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Image(
+                                  image: typingGif,
+                                  height: 40,
+                                  // fit: BoxFit.contain,
+                                ))
+                            : _drawMessage(activityLog, isMe)),
+                  ),
 
                   //seen
                   isMe

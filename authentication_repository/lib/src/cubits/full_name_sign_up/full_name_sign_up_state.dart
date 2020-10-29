@@ -26,8 +26,8 @@ class FullNameSignUpState<T extends EmailForm, P extends PasswordForm> extends A
       password: password ?? const PasswordForm.pure(),
       status: status ?? FormzStatus.pure,
       autoValidate: autoValidate ?? false,
-      emailDirtyFunction: emailDirtyFunction ?? EmailForm.constructor,
-      passwordDirtyFunction: passwordDirtyFunction ?? PasswordForm.constructor,
+      emailDirtyFunction: emailDirtyFunction,
+      passwordDirtyFunction: passwordDirtyFunction,
     );
   }
   FullNameSignUpState._({
@@ -46,8 +46,8 @@ class FullNameSignUpState<T extends EmailForm, P extends PasswordForm> extends A
   }) : super({
           firstNameKey: FormEntity(firstName, StringFieldForm.constructor),
           lastNameKey: FormEntity(lastName, StringFieldForm.constructor),
-          emailKey: FormEntity(email, emailDirtyFunction),
-          passwordKey: FormEntity(password, passwordDirtyFunction),
+          emailKey: FormEntity(email, emailDirtyFunction ?? EmailForm.constructor),
+          passwordKey: FormEntity(password, passwordDirtyFunction ?? PasswordForm.constructor),
         }, status, autoValidate);
 
   final T email;

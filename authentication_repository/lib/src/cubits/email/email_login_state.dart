@@ -6,19 +6,19 @@ class EmailLoginState extends AuthState {
     @required this.passwordKey,
     this.email = const EmailForm.pure(),
     this.password = const PasswordForm.pure(),
-    this.emailDirtyFunction = EmailForm.constructor,
-    this.passwordDirtyFunction = PasswordForm.constructor,
+    this.emailDirtyFunction,
+    this.passwordDirtyFunction,
     FormzStatus status = FormzStatus.pure,
     bool autoValidate = false,
   }) : super(
           {
             emailKey: FormEntity(
               email,
-              emailDirtyFunction,
+              emailDirtyFunction ?? EmailForm.constructor,
             ),
             passwordKey: FormEntity(
               password,
-              passwordDirtyFunction,
+              passwordDirtyFunction ?? PasswordForm.constructor,
             )
           },
           status,

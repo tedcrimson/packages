@@ -1,11 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navigation_provider/src/loading_bloc.dart';
 
-typedef String LoadError(PlatformException e);
+typedef String LoadError(Exception e);
 
 typedef Widget PopupBuilder(
   Widget child, {
@@ -17,10 +18,9 @@ typedef Widget PopupBuilder(
 typedef Widget LoadingBuilder<T>(
   Future<T> Function() onLoad,
   VoidCallback onTimeout,
-  LoadError onError,
   bool confirm,
   String confirmText,
-  int duration,
+  LoadError onError,
 );
 
 class NavigatorProvider<R extends PageRoute> {
@@ -59,13 +59,15 @@ class NavigatorProvider<R extends PageRoute> {
   //       context: context, widget: widget, resizeToAvoidBottomPadding: false);
   // }
 
-  Future<T> loadRoute<T>(BuildContext context,
-      {@required Future<T> Function() onLoad,
-      VoidCallback onTimeout,
-      LoadError onError,
-      bool confirm = false,
-      String confirmText,
-      int duration = 20}) async {
+  Future<T> loadRoute<T>(
+    BuildContext context, {
+    @required Future<T> Function() onLoad,
+    VoidCallback onTimeout,
+    LoadError onError,
+    bool popupError = false,
+    bool confirm = false,
+    String confirmText,
+  }) async {
     if (confirm) {
       bool res = await confirmPopup(confirmText: confirmText);
       if (!res) return null;
@@ -74,11 +76,24 @@ class NavigatorProvider<R extends PageRoute> {
     context.bloc<LoadingBloc>().start();
 
     T result;
+
     try {
       result = await onLoad();
+      // } on PlatformException catch (e) {
+      //   exception = e;
+      //   errorText = e.message;
+      // } on SocketException catch (e) {
+      //   exception = e;
+      //   errorText = e.osError.message;
+      // } on WebSocketException catch (e) {
+      //   exception = e;
+      //   errorText = e.message;
+      //
     } catch (e) {
       if (onError != null) {
-        var _errorText = onError(e);
+        onError(e);
+      } else if (popupError) {
+        var _errorText = e?.message ?? e.toString();
         textPopup(
           context,
           _errorText,
@@ -135,35 +150,5 @@ class NavigatorProvider<R extends PageRoute> {
 
   void pop() {
     navigatorState.pop();
-  }
-}
-
-extension BuildContextExt on BuildContext {
-  // static Map<Type, Function> _routes = <Type, Function>{
-  //   CupertinoPageRoute: (page) => CupertinoPageRoute(builder: (context) => page),
-  //   MaterialPageRoute: (page) => ),
-  // };
-  // static Function _getRoute(BuildContext context) {
-  //   return _routes[NavigatorProvider.of(context).type];
-  // }
-
-  Future<T> pushPage<T>(Widget page, {bool root = !kIsWeb}) async {
-    return Navigator.of(this, rootNavigator: root).push<T>(MaterialPageRoute(builder: (context) => page));
-  }
-
-  Future<T1> replacePage<T1, T2>(Widget page, {bool root = false, bool replaceAll = false}) {
-    NavigatorState navigatorState = Navigator.of(this);
-    if (replaceAll) {
-      navigatorState.popUntil((x) => x.isFirst);
-    }
-    return navigatorState.pushReplacement<T1, T2>(MaterialPageRoute(builder: (context) => page));
-  }
-
-  Future<T1> replacePageWithName<T1, T2>(String routeName, {bool root = false, Object args}) {
-    return Navigator.of(this).pushReplacementNamed<T1, T2>(routeName, arguments: args);
-  }
-
-  Future<T> pushPageWithName<T>(String routeName, {bool root = false, Object args}) {
-    return Navigator.of(this).pushNamed<T>(routeName, arguments: args);
   }
 }

@@ -3,15 +3,13 @@ import 'dart:typed_data';
 import 'package:firebase_chat/models.dart';
 import 'package:firebase_storage_repository/firebase_storage_repository.dart';
 import 'package:firestore_repository/firestore_repository.dart';
-import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ChatRepository {
-  ChatRepository(this.path,
-      {@required FirestoreRepository firestoreRepository, @required FirebaseStorageRepository storageRepository})
-      : _firestoreRepository = FirestoreRepository(),
-        _storageRepository = storageRepository;
+class ActivityRepository {
+  ActivityRepository(this.path, {FirestoreRepository firestoreRepository, FirebaseStorageRepository storageRepository})
+      : _firestoreRepository = firestoreRepository ?? FirestoreRepository(),
+        _storageRepository = storageRepository ?? FirebaseStorageRepository();
 
   final String path;
 

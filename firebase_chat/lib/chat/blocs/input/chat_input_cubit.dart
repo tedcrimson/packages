@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_chat/chat/chat_repository.dart';
+import 'package:firebase_chat/chat/activity_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_chat/models.dart';
@@ -12,12 +12,11 @@ class ChatInputCubit extends Cubit<ChatInputState> {
   ChatInputCubit({
     @required this.userFrom,
     @required this.userTo,
-    @required this.chatRepository,
+    @required this.activityRepository,
     @required this.textController,
-    // @required this.paginationBloc,
     this.scrollController,
   }) : super(InputEmptyState());
-  final ChatRepository chatRepository;
+  final ActivityRepository activityRepository;
   // final PaginationBloc paginationBloc;
   final TextEditingController textController;
   final ScrollController scrollController;
@@ -25,7 +24,7 @@ class ChatInputCubit extends Cubit<ChatInputState> {
 
   @override
   Future<void> close() {
-    chatRepository.setTyping(userFrom, false);
+    activityRepository.setTyping(userFrom, false);
     return super.close();
   }
 
@@ -34,21 +33,21 @@ class ChatInputCubit extends Cubit<ChatInputState> {
     if (input.isEmpty) {
       emit(InputEmptyState());
 
-      chatRepository.setTyping(userFrom, false);
+      activityRepository.setTyping(userFrom, false);
     } else {
-      if (!(state is ReadyToSendState)) chatRepository.setTyping(userFrom, true);
+      if (!(state is ReadyToSendState)) activityRepository.setTyping(userFrom, true);
       emit(ReadyToSendState(input));
     }
   }
 
   Future<bool> sendImage(Uint8List imageFile) async {
     if (imageFile == null) return false;
-    var docReference = chatRepository.createActivityReference();
+    var docReference = activityRepository.createActivityReference();
     var fileName = docReference.path.replaceAll(new RegExp(r'/'), '!');
 
-    var url = await chatRepository.uploadData(fileName, imageFile);
+    var url = await activityRepository.uploadData(fileName, imageFile);
     var activity = ImageActivity(idFrom: userFrom, idTo: userTo, imagePath: url);
-    await chatRepository.addActivity(docReference, activity);
+    await activityRepository.addActivity(docReference, activity);
     return true;
   }
 
@@ -59,11 +58,11 @@ class ChatInputCubit extends Cubit<ChatInputState> {
       textController.clear();
       emit(InputEmptyState());
 
-      var docReference = chatRepository.createActivityReference();
+      var docReference = activityRepository.createActivityReference();
 
-      chatRepository.setTyping(userFrom, false);
+      activityRepository.setTyping(userFrom, false);
       ActivityLog activity = TextActivity(idFrom: userFrom, idTo: userTo, text: text);
-      chatRepository.addActivity(docReference, activity);
+      activityRepository.addActivity(docReference, activity);
 
       if (scrollController != null)
         scrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
