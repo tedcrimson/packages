@@ -1,6 +1,5 @@
 import 'package:firebase_chat/firebase_chat.dart';
 import 'package:firebase_chat/models/activities/activitylog.dart';
-import 'package:user_repository/user_repository.dart';
 
 class ChatEntity {
   // final PeerUser userFrom;

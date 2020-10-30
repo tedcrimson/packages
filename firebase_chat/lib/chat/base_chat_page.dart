@@ -5,11 +5,11 @@ import 'dart:typed_data';
 import 'package:firebase_chat/chat/activity_repository.dart';
 import 'package:firebase_chat/models.dart';
 import 'package:firebase_chat/chat/chat_content.dart';
-import 'package:firebase_chat/gallery/gallery_view_item.dart';
 import 'package:firebase_chat/models/peer_user.dart';
 import 'package:firestore_repository/firestore_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gallery_previewer/gallery_previewer.dart';
 import '../utils/converter.dart' as converter;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,7 +116,6 @@ abstract class BaseChatState extends State<BaseChat> {
             break;
         }
       }
-      // setState(() {});//TODO: adonou
     });
     var fire = context.repository<FirestoreRepository>();
     var query = fire

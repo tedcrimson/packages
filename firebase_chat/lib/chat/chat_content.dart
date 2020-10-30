@@ -5,10 +5,10 @@ import 'package:firebase_chat/models.dart';
 import 'package:firebase_chat/chat/chat_avatar.dart';
 import 'package:firebase_chat/chat/image_activity_widget.dart';
 import 'package:firebase_chat/chat/text_activity_widget.dart';
-import 'package:firebase_chat/gallery/gallery_view_item.dart';
 import 'package:firebase_chat/models/peer_user.dart';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_previewer/gallery_previewer.dart';
 import 'package:intl/intl.dart';
 
 class ChatActivityWidget extends StatelessWidget {
