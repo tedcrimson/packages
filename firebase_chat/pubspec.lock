@@ -196,9 +196,11 @@ packages:
   gallery_previewer:
     dependency: "direct main"
     description:
-      path: "../gallery_previewer"
-      relative: true
-    source: path
+      path: gallery_previewer
+      ref: HEAD
+      resolved-ref: bfb5c0e0e663f4b8bf503fee66b89afa2f2ca044
+      url: "git@github.com:tedcrimson/packages.git"
+    source: git
     version: "0.0.1"
   http:
     dependency: transitive

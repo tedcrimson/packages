@@ -35,10 +35,10 @@ dependencies:
       url: git@github.com:tedcrimson/packages.git
       path: user_repository
   gallery_previewer:
-    path: ../gallery_previewer
-    # git:
-    #   url: git@github.com:tedcrimson/packages.git
-    #   path: gallery_previewer
+    # path: ../gallery_previewer
+    git:
+      url: git@github.com:tedcrimson/packages.git
+      path: gallery_previewer
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
