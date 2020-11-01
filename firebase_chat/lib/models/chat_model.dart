@@ -1,22 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel {
-  final String fromId;
-  final String toId;
+  final List<String> users;
   final DocumentReference lastMessageReference;
   final String path;
-  ChatModel({this.fromId, this.toId, this.path, this.lastMessageReference});
+  final String title;
+  ChatModel({this.users, this.path, this.lastMessageReference, this.title});
 
-  factory ChatModel.fromSnapshot(String userId, DocumentSnapshot snap) {
+  factory ChatModel.fromSnapshot(DocumentSnapshot snap) {
     var data = snap.data();
-    var toId = data['users'].firstWhere((x) => x != userId);
-    return ChatModel(fromId: userId, toId: toId, lastMessageReference: data['lastMessage'], path: snap.reference.path);
+    var users = List<String>.from(data['users']);
+    return ChatModel(
+      users: users,
+      lastMessageReference: data['lastMessage'],
+      path: snap.reference.path,
+      title: data['title'],
+    );
   }
 
   Map<String, Object> toJson() {
     var map = Map<String, Object>();
-    map['fromId'] = fromId;
-    map['toId'] = toId;
+    map['users'] = users;
+    map['title'] = title;
     return map;
   }
 }

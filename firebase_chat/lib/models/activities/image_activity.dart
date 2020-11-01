@@ -9,8 +9,8 @@ class ImageActivity extends ActivityLog {
     thumbPath = snapshot.data()['thumbPath'];
   }
 
-  ImageActivity({this.imagePath, this.thumbPath, String idFrom, String idTo})
-      : super(activityStatus: ActivityStatus.Image, idFrom: idFrom, idTo: idTo);
+  ImageActivity({this.imagePath, this.thumbPath, String userId})
+      : super(activityStatus: ActivityStatus.Image, userId: userId);
 
   @override
   Map<String, Object> toJson() {

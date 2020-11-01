@@ -3,13 +3,11 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 
-import 'firebase_model.dart';
-
 class ActivityStatus {
   static const Text = 1;
   static const Image = 2;
-  static const Status = 4;
-  static const Proposal = 8;
+  // static const Status = 4;
+  // static const Proposal = 8;
   //todo add more statuses
 }
 
@@ -20,36 +18,38 @@ class SeenStatus {
   //todo add more statuses
 }
 
-class ActivityLog extends FirebaseModel {
-  String idFrom;
-  String idTo;
+class ActivityLog {
+  String userId;
   int activityStatus;
   int seenStatus;
+  List<String> seenBy;
   Timestamp timestamp;
   String path;
+  String documentId;
 
   ActivityLog.fromSnapshot(DocumentSnapshot snapshot) {
-    documentID = snapshot.id;
+    documentId = snapshot.id;
     var data = snapshot.data();
-    idFrom = data['idFrom'];
-    idTo = data['idTo'];
+    userId = data['userId'];
     seenStatus = data['seenStatus'];
+    seenBy = List<String>.from(data['seenBy'] ?? []);
     timestamp = data['timestamp'];
     activityStatus = data['activityStatus'];
     path = snapshot.reference.path;
   }
 
-  ActivityLog({@required this.activityStatus, @required this.idFrom, @required this.idTo, String documentId}) {
-    this.documentID = documentId;
+  ActivityLog({@required this.activityStatus, @required this.userId, String documentId}) {
+    this.documentId = documentId;
     this.seenStatus = SeenStatus.Sent;
+    this.seenBy = [];
   }
 
-  @override
   Map<String, Object> toJson() {
     Map<String, Object> json = new Map<String, Object>();
-    json['idFrom'] = idFrom;
-    json['idTo'] = idTo;
+    json['userId'] = userId;
+    // json['idTo'] = idTo;
     json['seenStatus'] = seenStatus;
+    json['seenBy'] = seenBy ?? [];
     json['timestamp'] = FieldValue.serverTimestamp();
     json['activityStatus'] = activityStatus;
     return json;

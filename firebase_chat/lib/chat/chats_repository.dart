@@ -16,8 +16,9 @@ class ChatsRepository {
     return PeerUser.fromSnapshot(snap);
   }
 
-  Future<ActivityLog> getActivity(String path) async {
-    var snap = await _firestoreRepository.doc(path).get();
+  Future<ActivityLog> getActivity(DocumentReference reference) async {
+    if (reference == null) return null;
+    var snap = await reference.get();
     return ActivityLog.fromSnapshot(snap);
   }
 }

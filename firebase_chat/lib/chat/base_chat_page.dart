@@ -3,6 +3,8 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:firebase_chat/chat/activity_repository.dart';
+import 'package:firebase_chat/chat/typing_section.dart';
+import 'package:firebase_chat/chat/typing_widget.dart';
 import 'package:firebase_chat/models.dart';
 import 'package:firebase_chat/chat/chat_content.dart';
 import 'package:firebase_chat/models/peer_user.dart';
@@ -10,7 +12,6 @@ import 'package:firestore_repository/firestore_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_previewer/gallery_previewer.dart';
-import '../utils/converter.dart' as converter;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +19,14 @@ import 'blocs/input/chat_input_cubit.dart';
 
 abstract class BaseChat extends StatefulWidget {
   final String userId;
-  final PeerUser peer;
+  final Map<String, PeerUser> peers;
   final String path;
   // final ActivityRepository activityRepository;
 
   BaseChat({
     Key key,
     @required this.userId,
-    @required this.peer,
+    @required this.peers,
     @required this.path,
     // @required this.activityRepository,
   }) : super(key: key);
@@ -45,13 +46,8 @@ abstract class BaseChatState extends State<BaseChat> {
 
   String userId;
 
-  bool isPeerTyping = false;
-
-  Widget userImage;
-
   int messageLimit = 20;
 
-  StreamSubscription _typingSubscription;
   StreamSubscription _imagesSubscription;
 
   List<GalleryViewItem> images;
@@ -70,8 +66,7 @@ abstract class BaseChatState extends State<BaseChat> {
     activityRepository = ActivityRepository(widget.path);
 
     chatInputCubit = ChatInputCubit(
-      userFrom: userId,
-      userTo: widget.peer.id,
+      userId: userId,
       activityRepository: activityRepository,
       textController: textEditingController,
       scrollController: listScrollController,
@@ -79,11 +74,7 @@ abstract class BaseChatState extends State<BaseChat> {
 
     // Chat.currentChatPath = widget.path;
 
-    userImage = converter.Converter.convertToImage(widget.peer.image, size: 40);
-
     images = new List<GalleryViewItem>();
-
-    _getTyping();
 
     _imagesSubscription = activityRepository.getChatImages(activityRepository.reference).listen((onData) {
       bool init = onData.docChanges.length > 1;
@@ -92,7 +83,7 @@ abstract class BaseChatState extends State<BaseChat> {
           case DocumentChangeType.added:
             ImageActivity imageData = ImageActivity.fromSnapshot(snap.doc);
             var view = GalleryViewItem(
-              id: imageData.documentID,
+              id: imageData.documentId,
               url: imageData.imagePath,
               thumbnail: imageData.thumbPath,
             );
@@ -131,19 +122,7 @@ abstract class BaseChatState extends State<BaseChat> {
     paginationBloc.close();
     chatInputCubit.close();
 
-    _typingSubscription.cancel();
     _imagesSubscription.cancel();
-  }
-
-  _getTyping() {
-    _typingSubscription = activityRepository.reference.snapshots().listen((onData) {
-      if (onData.exists && onData.data().containsKey(widget.peer.id)) {
-        // setState(() {
-        isPeerTyping = onData.data()[widget.peer.id];
-        // });
-        paginationBloc.add(PaginationRefreshEvent());
-      }
-    });
   }
 
   FutureOr<ActivityLog> dataToModel(snap) {
@@ -163,19 +142,28 @@ abstract class BaseChatState extends State<BaseChat> {
   Future editAndUpload(Uint8List data);
 
   Widget buildItem(int i, List<ActivityLog> messages) {
-    var index = max(i - (isPeerTyping ? 1 : 0), 0);
+    var activity = messages[i];
+    var userId = activity.userId;
     return ChatActivityWidget(
-      activityLog: messages[index],
+      activityLog: activity,
       i: i,
       listMessage: messages,
-      userId: userId,
-      peer: widget.peer,
-      peerImage: userImage,
-      isPeerTyping: isPeerTyping,
+      userId: widget.userId,
+      peer: widget.peers[userId],
       images: images,
       activityRepository: activityRepository,
       loadingWidget: loadingWidget,
       primaryColor: primaryColor,
+      typingGif: typingGif,
+    );
+  }
+
+  Widget buildTyping() {
+    return TypingSection(
+      userId: widget.userId,
+      activityRepository: activityRepository,
+      peers: widget.peers,
+      typingGif: typingGif,
     );
   }
 
@@ -184,9 +172,22 @@ abstract class BaseChatState extends State<BaseChat> {
 
   Widget layout() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         // List of messages
-        Flexible(child: buildListMessage()),
+        Flexible(
+          child: SingleChildScrollView(
+              controller: listScrollController,
+              reverse: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildListMessage(listScrollController),
+                  buildTyping(),
+                  // buildTyping(),
+                ],
+              )),
+        ),
         // Input content
         buildInput(),
       ],
@@ -195,5 +196,7 @@ abstract class BaseChatState extends State<BaseChat> {
 
   Widget buildInput();
 
-  PaginationList<ActivityLog> buildListMessage();
+  Widget buildListMessage(ScrollController controller);
+
+  ImageProvider get typingGif;
 }

@@ -16,7 +16,7 @@ class ImageActivityWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // double imageMaxWidth = MediaQuery.of(context).size.width / 2;
     GalleryViewItem item = images.firstWhere((x) {
-      return x.id == imageActivity.documentID;
+      return x.id == imageActivity.documentId;
     }, orElse: () => null);
     if (item == null) return SizedBox();
 

@@ -10,8 +10,7 @@ part 'chat_input_state.dart';
 
 class ChatInputCubit extends Cubit<ChatInputState> {
   ChatInputCubit({
-    @required this.userFrom,
-    @required this.userTo,
+    @required this.userId,
     @required this.activityRepository,
     @required this.textController,
     this.scrollController,
@@ -20,11 +19,11 @@ class ChatInputCubit extends Cubit<ChatInputState> {
   // final PaginationBloc paginationBloc;
   final TextEditingController textController;
   final ScrollController scrollController;
-  final String userFrom, userTo;
+  final String userId;
 
   @override
   Future<void> close() {
-    activityRepository.setTyping(userFrom, false);
+    activityRepository.setTyping(userId, false);
     return super.close();
   }
 
@@ -33,9 +32,9 @@ class ChatInputCubit extends Cubit<ChatInputState> {
     if (input.isEmpty) {
       emit(InputEmptyState());
 
-      activityRepository.setTyping(userFrom, false);
+      activityRepository.setTyping(userId, false);
     } else {
-      if (!(state is ReadyToSendState)) activityRepository.setTyping(userFrom, true);
+      if (!(state is ReadyToSendState)) activityRepository.setTyping(userId, true);
       emit(ReadyToSendState(input));
     }
   }
@@ -46,7 +45,7 @@ class ChatInputCubit extends Cubit<ChatInputState> {
     var fileName = docReference.path.replaceAll(new RegExp(r'/'), '!');
 
     var url = await activityRepository.uploadData(fileName, imageFile);
-    var activity = ImageActivity(idFrom: userFrom, idTo: userTo, imagePath: url);
+    var activity = ImageActivity(userId: userId, imagePath: url);
     await activityRepository.addActivity(docReference, activity);
     return true;
   }
@@ -60,8 +59,8 @@ class ChatInputCubit extends Cubit<ChatInputState> {
 
       var docReference = activityRepository.createActivityReference();
 
-      activityRepository.setTyping(userFrom, false);
-      ActivityLog activity = TextActivity(idFrom: userFrom, idTo: userTo, text: text);
+      activityRepository.setTyping(userId, false);
+      ActivityLog activity = TextActivity(userId: userId, text: text);
       activityRepository.addActivity(docReference, activity);
 
       if (scrollController != null)

@@ -21,7 +21,7 @@ class ChatAvatar extends StatelessWidget {
                         color: Colors.indigo,
                         width: 40,
                         height: 40,
-                        child: peer.image == null || peer.image.isEmpty
+                        child: peer?.image == null || peer.image.isEmpty
                             ? Center(
                                 child: Text(
                                 peer.name[0],

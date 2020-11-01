@@ -6,6 +6,7 @@ import 'package:firebase_chat/chat/chat_avatar.dart';
 import 'package:firebase_chat/chat/image_activity_widget.dart';
 import 'package:firebase_chat/chat/text_activity_widget.dart';
 import 'package:firebase_chat/models/peer_user.dart';
+import 'package:firebase_chat/utils/converter.dart';
 
 import 'package:flutter/material.dart';
 import 'package:gallery_previewer/gallery_previewer.dart';
@@ -14,9 +15,8 @@ import 'package:intl/intl.dart';
 class ChatActivityWidget extends StatelessWidget {
   final List<ActivityLog> listMessage;
   final int i;
-  final bool isPeerTyping;
   final PeerUser peer;
-  final Widget peerImage;
+  // final Map<String,//TODO:ADD PEERS FOR SEENBY
   final String userId;
   final ActivityLog activityLog;
   final List<GalleryViewItem> images;
@@ -35,24 +35,21 @@ class ChatActivityWidget extends StatelessWidget {
     this.listMessage,
     this.userId,
     this.peer,
-    this.peerImage,
-    this.isPeerTyping,
     this.images,
     this.activityRepository,
     this.loadingWidget,
-    this.typingGif = const AssetImage('assets/typing.gif'),
+    this.typingGif,
   }) : super(key: key);
 
-  bool get typingWidget => i == 0 && isPeerTyping;
-  bool get isMe => activityLog.idFrom == this.userId && !typingWidget;
+  bool get isMe => activityLog.userId == this.userId;
 
   @override
   Widget build(BuildContext context) {
-    var index = getChatIndex(i);
+    var index = i;
 
     // print("OLA");
-    if (!isMe && activityLog.seenStatus == SeenStatus.Recieved) {
-      activityRepository.changeSeenStatus(activityLog.path, SeenStatus.Seen);
+    if (!isMe && !activityLog.seenBy.contains(userId)) {
+      activityRepository.changeSeenStatus(userId, activityLog, SeenStatus.Seen);
     }
 
     return Column(
@@ -67,9 +64,10 @@ class ChatActivityWidget extends StatelessWidget {
                 children: <Widget>[
                   //avatar
                   ChatAvatar(
-                    showAvatar: !isMe && isLastMessageLeft(index),
+                    showAvatar:
+                        !isMe && (index == 0 || listMessage[max(0, index - 1)].userId != listMessage[index].userId),
                     peer: peer,
-                    userImage: peerImage,
+                    userImage: Converter.convertToImage(peer?.image, size: 40),
                   ),
                   Flexible(
                     child: Material(
@@ -78,56 +76,43 @@ class ChatActivityWidget extends StatelessWidget {
                           topLeft: (isMe) || (!isMe && isLastMessageLeft(index + 2)) ? corner : flat,
                           topRight: (isMe && isLastMessageRight(index + 2)) || (!isMe) ? corner : flat,
                           bottomRight: isMe && isLastMessageRight(index) || (!isMe) ? corner : flat,
-                          bottomLeft: isMe || (!isMe && isLastMessageLeft(index) && !(isPeerTyping && index != i))
-                              ? corner
-                              : flat,
+                          bottomLeft: isMe || (!isMe && isLastMessageLeft(index) && index == i) ? corner : flat,
                         ),
                         elevation: 2,
                         clipBehavior: Clip.hardEdge,
-                        child: typingWidget
-                            ? Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Image(
-                                  image: typingGif,
-                                  height: 40,
-                                  // fit: BoxFit.contain,
-                                ))
-                            : _drawMessage(activityLog, isMe)),
+                        child: _drawMessage(activityLog, isMe)),
                   ),
 
                   //seen
-                  isMe
-                      ? Icon(
-                          activityLog.seenStatus == SeenStatus.Sent
-                              ? Icons.fiber_manual_record_outlined
-                              : activityLog.seenStatus == SeenStatus.Recieved
-                                  ? Icons.check_circle_outline
-                                  : Icons.check_circle,
-                          size: 12,
-                          color: activityLog.seenStatus < SeenStatus.Seen ? primaryColor : Colors.transparent)
-                      : Container()
+                  if (isMe)
+                    Icon(
+                      activityLog.seenStatus == SeenStatus.Sent
+                          ? Icons.fiber_manual_record_outlined
+                          : activityLog.seenStatus == SeenStatus.Recieved
+                              ? Icons.check_circle_outline
+                              : Icons.check_circle,
+                      size: 12,
+                      color: activityLog.seenStatus < SeenStatus.Seen ? primaryColor : Colors.transparent,
+                    )
                 ])),
+        // if (isMe)
+        // Row(children: activityLog.seenBy.map((e) => Text(e)).toList()),
 
         // Time
-        !isMe && isLastMessageLeft(index) && !typingWidget
-            ? Container(
-                child: Text(
-                  DateFormat('dd MMM kk:mm').format((activityLog.timestamp).toDate()),
-                  style: TextStyle(color: Colors.black, fontSize: 12.0, fontStyle: FontStyle.italic),
-                ),
-                margin: EdgeInsets.only(left: 5.0, top: 5.0, bottom: 5.0),
-              )
-            : Container()
+        if (!isMe && isLastMessageLeft(index))
+          Container(
+            child: Text(
+              DateFormat('dd MMM kk:mm').format((activityLog.timestamp).toDate()),
+              style: TextStyle(color: Colors.black, fontSize: 12.0, fontStyle: FontStyle.italic),
+            ),
+            margin: EdgeInsets.only(left: 5.0, top: 5.0, bottom: 5.0),
+          )
       ],
     );
   }
 
-  getChatIndex(int index) {
-    return max(index - (isPeerTyping ? 1 : 0), 0);
-  }
-
   bool isLastMessageLeft(int index) {
-    if ((index > 0 && listMessage != null && listMessage[min(index, listMessage.length) - 1].idFrom == this.userId) ||
+    if ((index > 0 && listMessage != null && listMessage[min(index, listMessage.length) - 1].userId == this.userId) ||
         index == 0) {
       return true;
     } else {
@@ -136,7 +121,7 @@ class ChatActivityWidget extends StatelessWidget {
   }
 
   bool isLastMessageRight(int index) {
-    if ((index > 0 && listMessage != null && listMessage[min(index, listMessage.length) - 1].idFrom != this.userId) ||
+    if ((index > 0 && listMessage != null && listMessage[min(index, listMessage.length) - 1].userId != this.userId) ||
         index == 0) {
       return true;
     } else {

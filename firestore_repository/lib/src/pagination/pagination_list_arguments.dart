@@ -21,6 +21,7 @@ class PaginationArgs<T> {
     this.customBuilder,
     this.reverse,
     this.shrinkWrap,
+    this.physics,
   });
 
   final Converter<T> converter;
@@ -39,6 +40,7 @@ class PaginationArgs<T> {
   final ScrollController scrollController;
   final bool reverse;
   final bool shrinkWrap;
+  final ScrollPhysics physics;
 
   PaginationArgs<T> copyWith({
     Converter<T> converter,
@@ -56,6 +58,7 @@ class PaginationArgs<T> {
     ScrollController scrollController,
     bool reverse,
     bool shrinkWrap,
+    ScrollPhysics physics,
   }) {
     return PaginationArgs<T>(
       converter: converter ?? this.converter,
@@ -73,6 +76,7 @@ class PaginationArgs<T> {
       scrollController: scrollController ?? this.scrollController,
       reverse: reverse ?? this.reverse,
       shrinkWrap: shrinkWrap ?? this.shrinkWrap,
+      physics: physics ?? this.physics,
     );
   }
 }

@@ -24,7 +24,7 @@ class DefaultChatCard extends StatelessWidget {
       onTap: () => onTap(entity),
       leading: ClipOval(
         child: Converter.convertToImage(
-          entity.userTo.image,
+          entity.mainUser.image, //TODO: CHANGE THIS
           size: 60,
           fit: BoxFit.cover,
           placeHolder: CircleAvatar(
@@ -42,7 +42,7 @@ class DefaultChatCard extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Text(
-            entity.userTo.name,
+            entity.peers.values.map((e) => e.name).join(', '), //TODO: FIX THIS
             style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           Spacer(),

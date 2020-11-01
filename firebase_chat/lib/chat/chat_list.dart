@@ -29,10 +29,15 @@ class _ChatListState extends State<ChatList> {
     _paginationBloc = PaginationBloc<ChatEntity>(
         widget.chatsRepository.getChatsQuery('Chats', [QueryFilter('users', arrayContains: widget.userId)]),
         (snap) async {
-      var model = ChatModel.fromSnapshot(widget.userId, snap);
-      var toUser = await widget.chatsRepository.getPeer(model.toId);
-      var lastActivity = await widget.chatsRepository.getActivity(model.lastMessageReference.path);
-      return ChatEntity(toUser, lastActivity, snap.reference.path);
+      var model = ChatModel.fromSnapshot(snap);
+      Map<String, PeerUser> peers = Map<String, PeerUser>();
+      for (var userId in model.users) {
+        var peer = await widget.chatsRepository.getPeer(userId);
+        peers[userId] = peer;
+      }
+
+      var lastActivity = await widget.chatsRepository.getActivity(model.lastMessageReference);
+      return ChatEntity(peers[widget.userId], peers, lastActivity, snap.reference.path, model.title);
     });
     super.initState();
   }

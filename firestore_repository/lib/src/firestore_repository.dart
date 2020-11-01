@@ -5,14 +5,14 @@ part 'query_filter.dart';
 
 class FirestoreRepository extends CRUDRepository {
   FirestoreRepository({FirebaseFirestore firestore, bool persistenceEnabled = false})
-      : _firestore = firestore ?? FirebaseFirestore.instance {
-    _firestore.settings = Settings(persistenceEnabled: persistenceEnabled);
+      : this.firestore = firestore ?? FirebaseFirestore.instance {
+    this.firestore.settings = Settings(persistenceEnabled: persistenceEnabled);
   }
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore firestore;
   // final FirebaseAuthenticationRepository _auth;
 
-  DocumentReference doc(String path) => _firestore.doc(path);
+  DocumentReference doc(String path) => firestore.doc(path);
 
   Future<QuerySnapshot> getCollection(List<String> fields,
       {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit, GetOptions getOptions}) async {
@@ -22,7 +22,7 @@ class FirestoreRepository extends CRUDRepository {
   Query getQuery(List<String> fields, {List<QueryFilter> filters, DocumentSnapshot startAfter, int limit}) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 == 0) throw FirestoreArgumentException();
-    Query query = _firestore.collection(fields.join('/'));
+    Query query = firestore.collection(fields.join('/'));
     if (filters != null) {
       for (var filter in filters)
         query = query.where(
@@ -79,30 +79,30 @@ class FirestoreRepository extends CRUDRepository {
   Stream<DocumentSnapshot> listen(List<String> fields) {
     if (fields.contains(null)) throw FirestoreNullArgumentException();
     if (fields.length % 2 != 0) throw FirestoreArgumentException();
-    return _firestore.doc(fields.join('/')).snapshots();
+    return firestore.doc(fields.join('/')).snapshots();
   }
 
   @override
   Future<DocumentReference> create(String path, dynamic data) {
-    return _firestore.collection(path).add(data);
+    return firestore.collection(path).add(data);
   }
 
   @override
   Future<void> delete(String path) {
-    return _firestore.doc(path).delete();
+    return firestore.doc(path).delete();
   }
 
   @override
   Future<DocumentSnapshot> read(String path) {
-    return _firestore.doc(path).get();
+    return firestore.doc(path).get();
   }
 
   @override
   Future<void> update(String path, dynamic data) {
-    return _firestore.doc(path).update(data);
+    return firestore.doc(path).update(data);
   }
 
   Future<void> _set(String path, dynamic data) {
-    return _firestore.doc(path).set(data);
+    return firestore.doc(path).set(data);
   }
 }

@@ -43,9 +43,9 @@ class _PaginationListState<T> extends State<PaginationList<T>> {
   void _onScroll() {
     if (scrollController.position.atEdge) {
       if (scrollController.position.pixels == 0) {
-        // print("Top");
+        print("Top");
       } else {
-        // print("Bottom");
+        print("Bottom");
         paginationBloc.add(PaginationFetched());
       }
     }
@@ -81,6 +81,7 @@ class _PaginationListState<T> extends State<PaginationList<T>> {
             return args.buildList(context, state);
           } else
             return ListView.builder(
+              physics: args.physics,
               shrinkWrap: args.shrinkWrap,
               reverse: args.reverse,
               itemBuilder: (BuildContext context, int index) {
@@ -99,7 +100,7 @@ class _PaginationListState<T> extends State<PaginationList<T>> {
                 }
               },
               itemCount: data.length + 1,
-              controller: scrollController,
+              controller: args.scrollController != null ? null : scrollController,
             );
         }
         return Center(child: Text("unknown state"));

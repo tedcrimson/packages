@@ -35,13 +35,26 @@ class ActivityRepository {
     var json = activityLog.toJson();
 
     activityReference.set(json).whenComplete(() {
-      changeSeenStatus(activityReference.path, SeenStatus.Recieved);
+      changeSeenStatus(null, activityLog, SeenStatus.Recieved);
     });
     return reference.update({'lastMessage': activityReference});
   }
 
-  Future<void> changeSeenStatus(String path, int seenStatus) {
-    return _firestoreRepository.doc(path).update({'seenStatus': seenStatus}); //sent
+  Future<void> changeSeenStatus(String userId, ActivityLog activity, int seenStatus) async {
+    if (activity != null && activity.path != null)
+      return _firestoreRepository.firestore.runTransaction((transaction) async {
+        var documentReference = _firestoreRepository.doc(activity.path);
+        DocumentSnapshot txSnapshot = await transaction.get(documentReference);
+        if (!txSnapshot.exists) return;
+        var map = txSnapshot.data();
+        if (userId != null) map['seenBy'].add(userId);
+        map['seenStatus'] = seenStatus;
+        transaction.update(documentReference, map);
+      });
+
+    // .catchError((e) {
+    //   return false;
+    // });
   }
 
   Future<String> uploadData(String fileName, Uint8List image) async {

@@ -7,8 +7,7 @@ class TextActivity extends ActivityLog {
     text = snap.data()['text'];
   }
 
-  TextActivity({this.text, String idFrom, String idTo})
-      : super(activityStatus: ActivityStatus.Text, idFrom: idFrom, idTo: idTo);
+  TextActivity({this.text, String userId}) : super(activityStatus: ActivityStatus.Text, userId: userId);
 
   @override
   Map<String, Object> toJson() {
