@@ -20,15 +20,15 @@ dependencies:
 
   
   firestore_repository:
-    path: ../firestore_repository
-    # git:
-    #   url: git@github.com:tedcrimson/packages.git
-    #   path: firestore_repository
+    # path: ../firestore_repository
+    git:
+      url: git@github.com:tedcrimson/packages.git
+      path: firestore_repository
   firebase_storage_repository:
-    path: ../firebase_storage_repository
-    # git:
-    #   url: git@github.com:tedcrimson/packages.git
-    #   path: firebase_storage_repository
+    # path: ../firebase_storage_repository
+    git:
+      url: git@github.com:tedcrimson/packages.git
+      path: firebase_storage_repository
   user_repository:
     # path: ../packages/user_repository
     git:

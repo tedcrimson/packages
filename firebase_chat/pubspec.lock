@@ -144,16 +144,20 @@ packages:
   firebase_storage_repository:
     dependency: "direct main"
     description:
-      path: "../firebase_storage_repository"
-      relative: true
-    source: path
+      path: firebase_storage_repository
+      ref: HEAD
+      resolved-ref: "200e209e1d6389cbcc9630a4444d0bd3ee934bfd"
+      url: "git@github.com:tedcrimson/packages.git"
+    source: git
     version: "0.0.1"
   firestore_repository:
     dependency: "direct main"
     description:
-      path: "../firestore_repository"
-      relative: true
-    source: path
+      path: firestore_repository
+      ref: HEAD
+      resolved-ref: "200e209e1d6389cbcc9630a4444d0bd3ee934bfd"
+      url: "git@github.com:tedcrimson/packages.git"
+    source: git
     version: "0.0.1"
   flutter:
     dependency: "direct main"
