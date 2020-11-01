@@ -49,7 +49,7 @@ class ChatActivityWidget extends StatelessWidget {
 
     // print("OLA");
     if (!isMe && !activityLog.seenBy.contains(userId)) {
-      activityRepository.changeSeenStatus(userId, activityLog, SeenStatus.Seen);
+      activityRepository.changeSeenStatus(userId, activityLog.path, SeenStatus.Seen);
     }
 
     return Column(

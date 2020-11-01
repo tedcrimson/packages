@@ -35,15 +35,15 @@ class ActivityRepository {
     var json = activityLog.toJson();
 
     activityReference.set(json).whenComplete(() {
-      changeSeenStatus(null, activityLog, SeenStatus.Recieved);
+      changeSeenStatus(null, activityReference.path, SeenStatus.Recieved);
     });
     return reference.update({'lastMessage': activityReference});
   }
 
-  Future<void> changeSeenStatus(String userId, ActivityLog activity, int seenStatus) async {
-    if (activity != null && activity.path != null)
+  Future<void> changeSeenStatus(String userId, String path, int seenStatus) async {
+    if (path != null)
       return _firestoreRepository.firestore.runTransaction((transaction) async {
-        var documentReference = _firestoreRepository.doc(activity.path);
+        var documentReference = _firestoreRepository.doc(path);
         DocumentSnapshot txSnapshot = await transaction.get(documentReference);
         if (!txSnapshot.exists) return;
         var map = txSnapshot.data();
