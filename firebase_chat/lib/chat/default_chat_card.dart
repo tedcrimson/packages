@@ -42,7 +42,7 @@ class DefaultChatCard extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Text(
-            entity.peers.values.map((e) => e.name).join(', '), //TODO: FIX THIS
+            entity.peers.values.map((e) => e.name).join(', '), //FIXME: FIX THIS
             style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           Spacer(),

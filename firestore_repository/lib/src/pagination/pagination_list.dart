@@ -43,9 +43,9 @@ class _PaginationListState<T> extends State<PaginationList<T>> {
   void _onScroll() {
     if (scrollController.position.atEdge) {
       if (scrollController.position.pixels == 0) {
-        print("Top");
+        // print("Top");
       } else {
-        print("Bottom");
+        // print("Bottom");
         paginationBloc.add(PaginationFetched());
       }
     }

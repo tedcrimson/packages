@@ -67,6 +67,6 @@ class ActivityRepository {
         .collection('Activity')
         .where("activityStatus", isEqualTo: ActivityStatus.Image)
         .orderBy('timestamp', descending: true)
-        .snapshots(); //TODO: change
+        .snapshots(); //DEBUG: asd
   }
 }
