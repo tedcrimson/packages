@@ -18,61 +18,66 @@ import 'package:flutter/material.dart';
 import 'blocs/input/chat_input_cubit.dart';
 
 abstract class BaseChat extends StatefulWidget {
-  final String userId;
-  final Map<String, PeerUser> peers;
-  final String path;
   // final ActivityRepository activityRepository;
 
-  BaseChat({
-    Key key,
-    @required this.userId,
-    @required this.peers,
-    @required this.path,
-    // @required this.activityRepository,
-  }) : super(key: key);
+  BaseChat(this.entity);
+
+  final ChatEntity entity;
 
   static BaseChatState of(BuildContext context) {
     return context.findAncestorStateOfType<BaseChatState>();
-
-    // onst TypeMatcher<ChatState>());
   }
-
-  // @override
-  // State createState() => new ChatScreenState();
 }
 
-abstract class BaseChatState extends State<BaseChat> {
-  PaginationBloc<ActivityLog> paginationBloc;
+abstract class BaseChatState<T extends BaseChat> extends State<BaseChat> {
+  // Color randomColor = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
+  ActivityRepository activityRepository;
 
-  String userId;
-
+  ChatInputCubit chatInputCubit;
+  List<GalleryViewItem> images;
+  final ScrollController listScrollController = new ScrollController();
   int messageLimit = 20;
+  Widget get onEmpty;
+  Widget get onError;
+  Query query;
+  final TextEditingController textEditingController = new TextEditingController();
+  // String userId;
 
   StreamSubscription _imagesSubscription;
 
-  List<GalleryViewItem> images;
+  ChatEntity entity;
 
-  final TextEditingController textEditingController = new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
-  // Color randomColor = Color((Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
-  ActivityRepository activityRepository;
-  ChatInputCubit chatInputCubit;
+  @override
+  void dispose() {
+    super.dispose();
+    chatInputCubit.close();
+    _imagesSubscription.cancel();
+  }
 
   @override
   void initState() {
     super.initState();
-    this.userId = widget.userId;
+    entity = widget.entity;
 
-    activityRepository = ActivityRepository(widget.path);
+    activityRepository = ActivityRepository(entity.path);
 
     chatInputCubit = ChatInputCubit(
-      userId: userId,
+      userId: entity.mainUser.id,
       activityRepository: activityRepository,
       textController: textEditingController,
       scrollController: listScrollController,
     );
 
     // Chat.currentChatPath = widget.path;
+
+    FirestoreRepository fire;
+    try {
+      fire = context.repository<FirestoreRepository>();
+    } catch (e) {
+      fire = FirestoreRepository();
+    }
+    query = fire
+        .getQuery([...entity.path.split('/'), 'Activity'], limit: messageLimit).orderBy('timestamp', descending: true);
 
     images = new List<GalleryViewItem>();
 
@@ -108,24 +113,9 @@ abstract class BaseChatState extends State<BaseChat> {
         }
       }
     });
-    var fire = context.repository<FirestoreRepository>();
-    var query = fire
-        .getQuery([...widget.path.split('/'), 'Activity'], limit: messageLimit).orderBy('timestamp', descending: true);
-
-    paginationBloc = PaginationBloc<ActivityLog>(query, dataToModel, limit: 20);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    // Chat.currentChatPath = "";
-    paginationBloc.close();
-    chatInputCubit.close();
-
-    _imagesSubscription.cancel();
-  }
-
-  FutureOr<ActivityLog> dataToModel(snap) {
+  FutureOr<ActivityLog> dataToModel(DocumentSnapshot snap) {
     ActivityLog activity = ActivityLog.fromSnapshot(snap);
 
     switch (activity.activityStatus) {
@@ -148,8 +138,8 @@ abstract class BaseChatState extends State<BaseChat> {
       activityLog: activity,
       i: i,
       listMessage: messages,
-      userId: widget.userId,
-      peer: widget.peers[userId],
+      userId: entity.mainUser.id,
+      peer: entity.peers[userId],
       images: images,
       activityRepository: activityRepository,
       loadingWidget: loadingWidget,
@@ -158,19 +148,45 @@ abstract class BaseChatState extends State<BaseChat> {
     );
   }
 
-  Widget buildTyping() {
+  Widget _buildMessageList() {
+    return PaginationList<ActivityLog>(
+      arguments: PaginationArgs<ActivityLog>(
+        query: query,
+        converter: dataToModel,
+        loadingWidget: loadingWidget,
+        limit: messageLimit,
+        scrollController: listScrollController,
+        reverse: true,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        buildItem: (context, state, index) => buildItem(index, state.data),
+        onInitial: (context, state) => Center(child: loadingWidget),
+        onFailure: (context, state) => onError,
+        onEmpty: (context, state) => onEmpty,
+      ),
+    );
+  }
+
+  Widget _buildTyping() {
     return TypingSection(
-      userId: widget.userId,
+      userId: entity.mainUser.id,
       activityRepository: activityRepository,
-      peers: widget.peers,
+      peers: entity.peers,
       typingGif: typingGif,
     );
   }
 
   Widget get loadingWidget;
+
   Color get primaryColor;
 
-  Widget layout() {
+  Widget buildInput();
+
+  ImageProvider get typingGif;
+
+  @mustCallSuper
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -182,9 +198,8 @@ abstract class BaseChatState extends State<BaseChat> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildListMessage(listScrollController),
-                  buildTyping(),
-                  // buildTyping(),
+                  _buildMessageList(),
+                  _buildTyping(),
                 ],
               )),
         ),
@@ -193,10 +208,4 @@ abstract class BaseChatState extends State<BaseChat> {
       ],
     );
   }
-
-  Widget buildInput();
-
-  Widget buildListMessage(ScrollController controller);
-
-  ImageProvider get typingGif;
 }

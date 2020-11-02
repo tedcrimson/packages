@@ -8,5 +8,11 @@ class ChatEntity {
   final String path;
   final String title;
 
-  ChatEntity(this.mainUser, this.peers, this.lastMessage, this.path, this.title);
+  ChatEntity({
+    this.mainUser,
+    this.peers,
+    this.lastMessage,
+    this.path,
+    this.title,
+  });
 }

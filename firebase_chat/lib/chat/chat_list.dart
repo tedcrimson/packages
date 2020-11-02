@@ -37,7 +37,12 @@ class _ChatListState extends State<ChatList> {
       }
 
       var lastActivity = await widget.chatsRepository.getActivity(model.lastMessageReference);
-      return ChatEntity(peers[widget.userId], peers, lastActivity, snap.reference.path, model.title);
+      return ChatEntity(
+          mainUser: peers[widget.userId],
+          peers: peers,
+          lastMessage: lastActivity,
+          path: snap.reference.path,
+          title: model.title);
     });
     super.initState();
   }

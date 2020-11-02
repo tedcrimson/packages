@@ -5,10 +5,10 @@ class PeerUser {
   final String image;
   final String name;
 
-  PeerUser(this.id, this.image, this.name);
+  PeerUser({this.id, this.image, this.name});
 
   factory PeerUser.fromSnapshot(DocumentSnapshot snap) {
     var data = snap.data();
-    return PeerUser(snap.id, data['image'], data['firstName'] + " " + data['lastName']);
+    return PeerUser(id: snap.id, image: data['image'], name: data['firstName'] + " " + data['lastName']);
   }
 }

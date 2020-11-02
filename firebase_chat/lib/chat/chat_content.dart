@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 class ChatActivityWidget extends StatelessWidget {
   final List<ActivityLog> listMessage;
+
   final int i;
   final PeerUser peer;
   // final Map<String,//TODO:ADD PEERS FOR SEENBY
