@@ -47,7 +47,10 @@ class ActivityRepository {
         DocumentSnapshot txSnapshot = await transaction.get(documentReference);
         if (!txSnapshot.exists) return;
         var map = txSnapshot.data();
-        if (userId != null) map['seenBy'].add(userId);
+        if (userId != null) {
+          if (map['seenBy'] == null) map['seenBy'] = [];
+          map['seenBy'].add(userId);
+        }
         map['seenStatus'] = seenStatus;
         transaction.update(documentReference, map);
       });
