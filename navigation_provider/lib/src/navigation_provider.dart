@@ -43,7 +43,7 @@ class NavigatorProvider<R extends PageRoute> {
     } else
       return showCupertinoModalPopup<T>(
         context: navigatorState.context,
-        barrierColor: Colors.black54,
+        // barrierColor: Colors.black54,
         builder: (BuildContext context) {
           return widget;
         },
