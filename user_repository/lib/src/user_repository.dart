@@ -2,22 +2,22 @@ import 'dart:async';
 
 import 'models/models.dart';
 
-abstract class UserRepository {
-  UserRepository({Stream<UserModel> stream}) {
+abstract class UserRepository<T extends UserModel> {
+  UserRepository({Stream<T> stream}) {
     _stream = stream;
   }
 
-  Stream<UserModel> _stream;
-  UserModel _user;
+  Stream<T> _stream;
+  T _user;
 
-  UserModel get user => _user;
+  T get user => _user;
 
-  Stream<UserModel> get userStream => _stream;
+  Stream<T> get userStream => _stream;
 
-  Future<UserModel> getUser() async {
+  Future<T> getUser() async {
     if (_user != null) return _user;
     return fetchUser();
   }
 
-  Future<UserModel> fetchUser();
+  Future<T> fetchUser();
 }
