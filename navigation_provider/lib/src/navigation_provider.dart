@@ -71,7 +71,7 @@ class NavigatorProvider<R extends PageRoute> {
       if (!res) return null;
     }
 
-    context.bloc<LoadingBloc>().start();
+    context.read<LoadingBloc>().start();
 
     T result;
 
@@ -98,7 +98,7 @@ class NavigatorProvider<R extends PageRoute> {
         );
       }
     } finally {
-      context.bloc<LoadingBloc>().end();
+      context.read<LoadingBloc>().end();
     }
 
     // var res = await navigatorState.push<T>(PageRouteBuilder(
